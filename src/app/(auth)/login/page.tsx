@@ -8,10 +8,32 @@ import { UserLoginForm } from "@/components/auth/user-login-form";
 export default function Loginpage() {
   return (
     <>
-      <div className="container relative  h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
-        {/* Signup Form */}
-        <div className="p-3 sm:p-8 ">
-          <div className="mx-auto flex w-full flex-col justify-center space-y-6 w-[300px] sm:w-[450px]">
+      <div className="w-full  h-screen flex items-center justify-center  lg:px-0 ">
+      <div className="relative hidden h-screen flex-col w-3/4   dark:border-r lg:flex">
+        <div className="absolute top-20 left-20 right-20 z-10">
+            <h1 className="text-white text-4xl font-bold cursor-pointer"><Link href="/">Snapcheck</Link></h1>
+            <p className="text-white font-semibold mt-2 cursor-pointer pr-10">Lorem, ipsum  porro aspernatur eos voluptatum commodi facilis! Autem similique dolorum eos, nesciunt magnam ex alias suscipit aut.</p>
+
+          </div>
+          <Image
+            src="/images/login.jpeg"
+            fill
+            alt="signup.png"
+            quality={100}
+            className="block dark:hidden h-screen object-fill w-full"
+          />
+          <Image
+            src="/images/login.jpeg"
+            fill
+            alt="signup.png"
+            quality={100}
+            className="hidden brightness-75 dark:block object-fill h-screen w-full filter   "
+          />
+        </div>
+      
+        {/* Login Form */}
+        <div className="p-3   sm:p-5  md:p-8  ">
+          <div className="mx-auto flex  flex-col justify-center space-y-6 w-[300px] sm:w-[450px]">
             <div className="flex flex-col space-y-2 text-center">
               <h1 className="text-2xl font-semibold tracking-tight">
                 Log in to your account
@@ -31,22 +53,7 @@ export default function Loginpage() {
           </div>
         </div>
 
-        <div className="relative hidden h-screen flex-col  dark:border-r lg:flex">
-          <Image
-            src="/images/test2.png"
-            width={100}
-            height={100}
-            alt="login.png"
-            className="block dark:hidden h-screen object-fill h-screen w-full"
-          />
-          <Image
-            src="/images/test2.png"
-            width={100}
-            height={100}
-            alt="login.png"
-            className="hidden dark:block  h-screen w-full "
-          />
-        </div>
+        
       </div>
     </>
   );

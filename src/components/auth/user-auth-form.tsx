@@ -4,168 +4,240 @@ import * as React from "react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
-// import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
 import { CheckIcon, Router } from "lucide-react";
 import Link from "next/link";
 import { InternalHrSchema } from "@/schemas/signUpSchema";
+import * as z from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useToast } from "../ui/use-toast";
+import { ToastAction } from "../ui/toast";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 
-interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
-
-export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
-  const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const [error, setError] = useState<string>("");
-  const router = useRouter();
-
-  async function onSubmit(event: React.SyntheticEvent) {
-    event.preventDefault();
-    setIsLoading(true);
-
-    const formData = new FormData(event.target as HTMLFormElement);
-    const password = formData.get("password") as string;
-    const confirmPassword = formData.get("confirmPassword") as string;
-    const service = formData.get("service") as string;
-
-    if (password !== confirmPassword) {
-      setError("Password and Confirm Password must match"); // Set error message
-      setIsLoading(false);
-      return;
+// Define Zod schema for form validation
+const formSchema = z
+  .object({
+    firstName: z
+      .string()
+      .min(4, { message: "First name must be at least 4 characters long" }),
+    email: z.string().email({ message: "Invalid email address" }),
+    password: z
+      .string()
+      .min(8, { message: "The password must be at least 8 characters long" })
+      .max(32, { message: "The password must be a maximun 32 characters" }),
+    passwordConfirm: z.string(),
+  })
+  .refine(
+    (data) => {
+      return data.password === data.passwordConfirm;
+    },
+    {
+      message: "Passwords do not match",
+      path: ["passwordConfirm"],
     }
+  );
 
-    try {
-      InternalHrSchema.parse({
-        name: formData.get("name"),
-        email: formData.get("email"),
-        password: formData.get("password"),
-      });
-    } catch (error) {
-      console.error("Error registering user", error);
-      if (error instanceof Error) {
-        setError(error.message);
-        setIsLoading(false);
-        return;
-      } else {
-        setError("Unknown error occurred");
-        setIsLoading(false);
-        return;
-      }
-    }
+// interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
-    const userData = {
-      name: formData.get("name"),
-      email: formData.get("email"),
-      password: formData.get("password"),
-    };
+export function UserAuthForm() {
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      firstName: "",
+      email: "",
+      password: "",
+      passwordConfirm: "",
+    },
+  });
 
-    try {
-      const response = await fetch("/api/users/sign-up", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(userData),
-      });
+  const handleSubmit = (values: z.infer<typeof formSchema>) => {
+    console.log({ values });
+  };
 
-      if (!response.ok) {
-        throw new Error("Failed to register user");
-      }
-      router.push("/login");
-      const data = await response.json();
-      console.log(data); // Handle success response here
-    } catch (error) {
-      console.error("Error registering user", error);
-      // Handle error here
-    } finally {
-      setIsLoading(false);
-    }
-  }
+  // const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  // const [error, setError] = useState<string>("");
+  // const router = useRouter();
+  // const { toast } = useToast();
+
+  // async function onSubmit(event: React.SyntheticEvent) {
+  //   event.preventDefault();
+  //   setIsLoading(true);
+
+  //   const formData = new FormData(event.target as HTMLFormElement);
+  //   const password = formData.get("password") as string;
+  //   const confirmPassword = formData.get("confirmPassword") as string;
+  //   const service = formData.get("service") as string;
+
+  //   if (password !== confirmPassword) {
+  //     setError("Password and Confirm Password must match");
+  //     setIsLoading(false);
+  //     return;
+  //   }
+
+  //   try {
+  //     InternalHrSchema.parse({
+  //       name: formData.get("name"),
+  //       email: formData.get("email"),
+  //       password: formData.get("password"),
+  //     });
+  //   } catch (error) {
+  //     console.error("Error registering user", error);
+  //     if (error instanceof Error) {
+  //       setError(error.message);
+  //       setIsLoading(false);
+  //       return;
+  //     } else {
+  //       setError("Unknown error occurred");
+  //       setIsLoading(false);
+  //       return;
+  //     }
+  //   }
+
+  //   const userData = {
+  //     name: formData.get("name"),
+  //     email: formData.get("email"),
+  //     password: formData.get("password"),
+  //   };
+
+  //   try {
+  //     const response = await fetch("/api/users/sign-up", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(userData),
+  //     });
+
+  //     if (!response.ok) {
+  //       throw new Error("Failed to register user");
+  //     }
+
+  //      toast({
+
+  //       description: "Your account has been created successfully.",
+  //     });
+
+  //  setTimeout(() => {
+  //   router.push("/login");
+  // }, 3000);
+  //     const data = await response.json();
+  //     console.log(data);
+  //   } catch (error) {
+  //     console.error("Error registering user", error);
+
+  //      toast({
+  //       variant: "destructive",
+  //       title: "Uh oh! Something went wrong.",
+  //       description: "There was a problem with your request.",
+  //       action: <ToastAction altText="Try again" onClick={onSubmit}>Try again</ToastAction>,
+  //     });
+
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // }
 
   return (
-    <div className={cn("grid gap-6", className)} {...props}>
-      {error && (
+    <div className="grid gap-6">
+      {/* {error && (
         <p className="text-red-500">{error}</p> // Display error message if present
-      )}
-      <form onSubmit={onSubmit}>
-        <div className="grid gap-4">
-          <div className="grid gap-2">
-            <Label htmlFor="name">Full name</Label>
-            <Input
-              id="name"
-              name="name"
-              placeholder="Enter your full name"
-              type="text"
-              autoCapitalize="none"
-              autoComplete="name"
-              autoCorrect="off"
-              disabled={isLoading}
-            />
-          </div>
+      )} */}
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-3">
+          <FormField
+            control={form.control}
+            name="firstName"
+            render={({ field }) => {
+              return (
+                <FormItem>
+                  <FormLabel>Full name</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter full name"
+                      type="text"
+                      {...field}
+                      autoCapitalize="none"
+                      autoComplete="text"
+                      autoCorrect="off"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
+          />
 
-          <div className="grid gap-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              name="email"
-              placeholder="Enter your email"
-              type="email"
-              autoCapitalize="none"
-              autoComplete="email"
-              autoCorrect="off"
-              disabled={isLoading}
-            />
-          </div>
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => {
+              return (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter your email"
+                      type="email"
+                      autoCapitalize="none"
+                      autoComplete="email"
+                      autoCorrect="off"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
+          />
 
-          <div className="grid gap-2">
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              name="password"
-              placeholder="Enter your password"
-              type="password"
-              autoComplete="current-password"
-              autoCapitalize="none"
-              autoCorrect="off"
-              disabled={isLoading}
-            />
-          </div>
-
-          <div className="grid gap-2">
-            <Label htmlFor="password">Confirm Password</Label>
-            <Input
-              id="password"
-              name="confirmPassword"
-              placeholder=" Confirm  Password"
-              type="password"
-              autoComplete="current-password"
-              autoCapitalize="none"
-              autoCorrect="off"
-              disabled={isLoading}
-            />
-          </div>
-
-          <div className="grid gap-2">
-            <Label htmlFor="framework">Service</Label>
-            <Select>
-              <SelectTrigger id="framework">
-                <SelectValue placeholder="Select of service" />
-              </SelectTrigger>
-              <SelectContent position="popper">
-                <SelectItem value="external">External HR</SelectItem>
-                <SelectItem value="internal">Internal HR</SelectItem>
-                <SelectItem value="candidate">Candidate</SelectItem>
-                <SelectItem value="admin">Admin</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => {
+              return (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter password"
+                      type="password"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
+          />
+          <FormField
+            control={form.control}
+            name="passwordConfirm"
+            render={({ field }) => {
+              return (
+                <FormItem>
+                  <FormLabel>Confrim password</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Confirm password"
+                      type="password"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
+          />
 
           <p className="px-8 text-center text-sm text-muted-foreground">
             By clicking button, you agree to our{" "}
@@ -185,11 +257,11 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
             .
           </p>
 
-          <Button className="w-full">
+          <Button className="w-full" type="submit">
             <CheckIcon className="mr-2 h-4 w-4" /> Signup
           </Button>
-        </div>
-      </form>
+        </form>
+      </Form>
     </div>
   );
 }
