@@ -46,69 +46,69 @@ const formSchema = z
   );
 
 export default function ChnagePassword() {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      password: "",
-      passwordConfirm: "",
-    },
-  });
-  const searchParams = useSearchParams();
-  const router= useRouter();
-  const [user, setUser] = useState({name:"",id:""});
+  // const form = useForm<z.infer<typeof formSchema>>({
+  //   resolver: zodResolver(formSchema),
+  //   defaultValues: {
+  //     password: "",
+  //     passwordConfirm: "",
+  //   },
+  // });
+  // const searchParams = useSearchParams();
+  // const router= useRouter();
+  // const [user, setUser] = useState({name:"",id:""});
 
-  const userId = searchParams.get('userId');
-    const token = searchParams.get('token');
-    console.log("userId",userId);
-    console.log("token",token);
-    async function check(){
-      const response:any = await fetch("/api/users/check-token", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({userId,token}),
-      });
+  // const userId = searchParams.get('userId');
+  //   const token = searchParams.get('token');
+  //   console.log("userId",userId);
+  //   console.log("token",token);
+  //   async function check(){
+  //     const response:any = await fetch("/api/users/check-token", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({userId,token}),
+  //     });
 
-      if (!response.ok) {
-        const data = await response.json();
-        console.log("data",data);
+  //     if (!response.ok) {
+  //       const data = await response.json();
+  //       console.log("data",data);
         
-        return;
-      }
-      const data = await response.json();
-      setUser(data.user);
+  //       return;
+  //     }
+  //     const data = await response.json();
+  //     setUser(data.user);
       
-    }
+  //   }
 
-  useEffect(() => {
+  // useEffect(() => {
     
 
-    check();
+  //   check();
     
-  }, [check]);
+  // }, [check]);
   
-  const handleSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values.password);
+  // const handleSubmit = async (values: z.infer<typeof formSchema>) => {
+  //   console.log(values.password);
 
-    const response:any = await fetch("/api/users/change-pass", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({userId:user.id,password:values.password}),
-    });
+  //   const response:any = await fetch("/api/users/change-pass", {
+  //     method: "PUT",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify({userId:user.id,password:values.password}),
+  //   });
 
-    if (!response.ok) {
-      const data = await response.json();
-      console.log("data",data);
+  //   if (!response.ok) {
+  //     const data = await response.json();
+  //     console.log("data",data);
       
-      return;
-    }
-    const data = await response.json();
-    router.push('/login');
+  //     return;
+  //   }
+  //   const data = await response.json();
+  //   router.push('/login');
 
-  };
+  // };
 
   return (
     <>
@@ -117,7 +117,7 @@ export default function ChnagePassword() {
           Snapcheck
         </Link>
       </div>
-      <div className="flex justify-center p-4 items-center h-screen">
+{/*       <div className="flex justify-center p-4 items-center h-screen">
         <Card className="w-[550px]">
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl">Change your password {user.name}</CardTitle>
@@ -180,7 +180,7 @@ export default function ChnagePassword() {
             </Form>
           </CardContent>
         </Card>
-      </div>
+      </div> */}
     </>
   );
 }
