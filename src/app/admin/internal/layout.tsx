@@ -7,12 +7,13 @@ export const metadata: Metadata = {
   description: "Snapcheck Admin",
 };
 
-interface DashBoardLayoutProps {
+interface InternalLayoutProps {
   children: React.ReactNode;
 }
 
 
-export default function DashBoardLayout({ children }: DashBoardLayoutProps) {
+
+export default function InternalLayout({ children }: InternalLayoutProps) {
   return (
     <>
       <div className="flex min-h-screen w-full  ">

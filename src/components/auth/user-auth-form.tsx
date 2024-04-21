@@ -36,6 +36,9 @@ const formSchema = z
       .min(8, { message: "The password must be at least 8 characters long" })
       .max(32, { message: "The password must be a maximun 32 characters" }),
     passwordConfirm: z.string(),
+    companyName: z
+    .string()
+    .min(2, { message: "Company name must be at least 2 characters long" }),
   })
   .refine(
     (data) => {
@@ -57,6 +60,7 @@ export function UserAuthForm() {
       email: "",
       password: "",
       passwordConfirm: "",
+      companyName: "",
     },
   });
 
@@ -231,6 +235,29 @@ export function UserAuthForm() {
                       placeholder="Confirm password"
                       type="password"
                       {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
+          />
+
+<FormField
+            control={form.control}
+            name="companyName"
+            render={({ field }) => {
+              return (
+                <FormItem>
+                  <FormLabel>Company name</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter company name"
+                      type="text"
+                      {...field}
+                      autoCapitalize="none"
+                      autoComplete="text"
+                      autoCorrect="off"
                     />
                   </FormControl>
                   <FormMessage />

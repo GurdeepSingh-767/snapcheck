@@ -2,19 +2,14 @@
 
 import Link from "next/link";
 
-
-
-export default function ChnagePassword() {
-  
-
+export default function ChangePassword() {
   return (
-    <>
-      <div className="flex justify-center ">
+    <div className="flex justify-center">
+      <h1>
         <Link href="/" className="font-bold py-4 text-2xl lg:text-4xl">
           Snapcheck
         </Link>
-      </div>
-      
-    </>
+      </h1>
+    </div>
   );
 }

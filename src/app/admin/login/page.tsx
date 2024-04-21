@@ -2,10 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-
-import { UserLoginForm } from "@/components/auth/user-login-form";
-
-export default function Loginpage() {
+import { AdminLoginForm } from "@/components/admin/admin-login-form";
+export default function LoginPageAdmin() {
   return (
     <>
       <div className="w-full  h-screen flex items-center justify-center  lg:px-0 ">
@@ -36,10 +34,10 @@ export default function Loginpage() {
           <div className="mx-auto flex  flex-col justify-center space-y-6 w-[300px] sm:w-[450px]">
             <div className="flex flex-col space-y-2 text-center">
               <h1 className="text-2xl font-semibold tracking-tight">
-                Log in to your account
+               Admin Login
               </h1>
             </div>
-            <UserLoginForm />
+            <AdminLoginForm/>
 
             <p className="px-8 text-center text-sm text-muted-foreground">
               Don&apos;t have an account?{" "}

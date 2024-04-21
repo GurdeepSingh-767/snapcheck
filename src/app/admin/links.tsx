@@ -3,13 +3,13 @@ import { ListPlus, UserPlus, Settings, LayoutDashboard } from 'lucide-react';
 
 export const sidebarNavItems = [
   {
-    title: "Track Order",
-    href: "/admin/trackorder",
-    icon: <ListPlus size={20} />,
+    title: "Dashboard",
+    href: "/admin/dashboard",
+    icon: <LayoutDashboard size={20} />,
   },
   {
-    title: "Create Order",
-    href: "/admin/createorder",
+    title: "Add Internal HR",
+    href: "/admin/internal",
     icon: <UserPlus size={20} />,
   },
   {
@@ -17,9 +17,5 @@ export const sidebarNavItems = [
     href: "/admin/settings",
     icon: <Settings size={20} />,
   },
-  {
-    title: "Dashboard",
-    href: "/admin/dashboard",
-    icon: <LayoutDashboard size={20} />,
-  },
+
 ];
