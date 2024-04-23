@@ -9,6 +9,7 @@ import {
   UserPlus,
   ListPlus,
   Settings,
+  FolderKanban,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -69,8 +70,11 @@ export default function AdminHeader() {
   // Define array of links
   const links = [
     { href: "/admin/dashboard", text: "Dashboard", icon: < LayoutDashboard className="h-5 w-5" /> },
-    { href: "/admin/internal", text: "Add Internal HR", icon: <UserPlus className="h-5 w-5" /> },
+    { href: "/admin/internal", text: "Internal HR", icon: <UserPlus className="h-5 w-5" /> },
+    { href: "/admin/external", text: "External HR", icon: <ListPlus className="h-5 w-5" /> },
+    { href: "/admin/plans", text: "Plan Request", icon: <FolderKanban className="h-5 w-5" /> },
     { href: "/admin/settings", text: "Settings", icon: <Settings className="h-5 w-5" /> },
+    
   ];
 
   return (

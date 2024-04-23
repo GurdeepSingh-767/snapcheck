@@ -4,7 +4,7 @@ import * as React from "react";
 
 import { Separator } from "@/components/ui/separator";
 import AdminHeader from "@/components/admin/admin-header";
-import InternalTable from "./internal-table";
+
 
 export default function Internal() {
   return (
@@ -13,7 +13,7 @@ export default function Internal() {
       <AdminHeader />
       <Separator />
     </div>
-     <InternalTable/>
+     
      </>
   );
 }

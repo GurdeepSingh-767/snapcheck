@@ -12,7 +12,7 @@ export function middleware(request: NextRequest) {
 
   const internalPaths = ["/internal", "/internal/dashboard","/internal/createorder","/internal/trackorder","/internal/settings"];
   const externalPaths = ["/external", "/external/dashboard","/external/createorder","/external/trackorder","/external/settings"];
-  const adminPaths = ["/admin/dashboard","/admin/createorder","/admin/trackorder","/admin/settings"]; 
+  const adminPaths = ["/admin/dashboard","/admin/internal","/admin/external","/admin/plans","/admin/settings"]; 
 
   if (internal_token && !internalPaths.includes(path) && !isPublicPath) {
     return NextResponse.redirect(new URL("/", request.nextUrl));
