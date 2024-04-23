@@ -27,7 +27,7 @@ import {
 // Define Zod schema for form validation
 const formSchema = z
   .object({
-    firstName: z
+    name: z
       .string()
       .min(4, { message: "First name must be at least 4 characters long" }),
     email: z.string().email({ message: "Invalid email address" }),
@@ -36,7 +36,7 @@ const formSchema = z
       .min(8, { message: "The password must be at least 8 characters long" })
       .max(32, { message: "The password must be a maximun 32 characters" }),
     passwordConfirm: z.string(),
-    companyName: z
+    company: z
     .string()
     .min(2, { message: "Company name must be at least 2 characters long" }),
   })
@@ -53,103 +53,68 @@ const formSchema = z
 // interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function UserAuthForm() {
+
+  const router = useRouter();
+  const { toast } = useToast();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      firstName: "",
+      name: "",
       email: "",
       password: "",
       passwordConfirm: "",
-      companyName: "",
+      company: "",
     },
   });
 
-  const handleSubmit = (values: z.infer<typeof formSchema>) => {
+  const handleSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log({ values });
-  };
 
-  // const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  // const [error, setError] = useState<string>("");
-  // const router = useRouter();
-  // const { toast } = useToast();
 
-  // async function onSubmit(event: React.SyntheticEvent) {
-  //   event.preventDefault();
-  //   setIsLoading(true);
+    const userData = {
+      name: values.name,
+      email: values.email,
+      role:"external",
+      company:values.company,
+      password: values.password
+    };
 
-  //   const formData = new FormData(event.target as HTMLFormElement);
-  //   const password = formData.get("password") as string;
-  //   const confirmPassword = formData.get("confirmPassword") as string;
-  //   const service = formData.get("service") as string;
+    try {
+      const response = await fetch("/api/hr/sign-up", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData),
+      });
 
-  //   if (password !== confirmPassword) {
-  //     setError("Password and Confirm Password must match");
-  //     setIsLoading(false);
-  //     return;
-  //   }
+      if (!response.ok) {
+        throw new Error("Failed to register user");
+      }
 
-  //   try {
-  //     InternalHrSchema.parse({
-  //       name: formData.get("name"),
-  //       email: formData.get("email"),
-  //       password: formData.get("password"),
-  //     });
-  //   } catch (error) {
-  //     console.error("Error registering user", error);
-  //     if (error instanceof Error) {
-  //       setError(error.message);
-  //       setIsLoading(false);
-  //       return;
-  //     } else {
-  //       setError("Unknown error occurred");
-  //       setIsLoading(false);
-  //       return;
-  //     }
-  //   }
+       toast({
 
-  //   const userData = {
-  //     name: formData.get("name"),
-  //     email: formData.get("email"),
-  //     password: formData.get("password"),
-  //   };
+        description: "Your account has been created successfully.",
+      });
 
-  //   try {
-  //     const response = await fetch("/api/users/sign-up", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify(userData),
-  //     });
+   setTimeout(() => {
+    router.push("/login");
+  }, 3000);
+      const data = await response.json();
+      console.log(data);
+    } catch (error) {
+      console.error("Error registering user", error);
 
-  //     if (!response.ok) {
-  //       throw new Error("Failed to register user");
-  //     }
+       toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: "There was a problem with your request.",
+        // action: <ToastAction altText="Try again" onClick={handleSubmit}>Try again</ToastAction>,
+      });
 
-  //      toast({
-
-  //       description: "Your account has been created successfully.",
-  //     });
-
-  //  setTimeout(() => {
-  //   router.push("/login");
-  // }, 3000);
-  //     const data = await response.json();
-  //     console.log(data);
-  //   } catch (error) {
-  //     console.error("Error registering user", error);
-
-  //      toast({
-  //       variant: "destructive",
-  //       title: "Uh oh! Something went wrong.",
-  //       description: "There was a problem with your request.",
-  //       action: <ToastAction altText="Try again" onClick={onSubmit}>Try again</ToastAction>,
-  //     });
-
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // }
+    }
+  }
 
   return (
     <div className="grid gap-6">
@@ -160,7 +125,7 @@ export function UserAuthForm() {
         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-3">
           <FormField
             control={form.control}
-            name="firstName"
+            name="name"
             render={({ field }) => {
               return (
                 <FormItem>
@@ -196,6 +161,28 @@ export function UserAuthForm() {
                       autoComplete="email"
                       autoCorrect="off"
                       {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
+          />
+          <FormField
+            control={form.control}
+            name="company"
+            render={({ field }) => {
+              return (
+                <FormItem>
+                  <FormLabel>Company name</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter company name"
+                      type="text"
+                      {...field}
+                      autoCapitalize="none"
+                      autoComplete="text"
+                      autoCorrect="off"
                     />
                   </FormControl>
                   <FormMessage />
@@ -242,30 +229,6 @@ export function UserAuthForm() {
               );
             }}
           />
-
-<FormField
-            control={form.control}
-            name="companyName"
-            render={({ field }) => {
-              return (
-                <FormItem>
-                  <FormLabel>Company name</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Enter company name"
-                      type="text"
-                      {...field}
-                      autoCapitalize="none"
-                      autoComplete="text"
-                      autoCorrect="off"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              );
-            }}
-          />
-
           <p className="px-8 text-center text-sm text-muted-foreground">
             By clicking button, you agree to our{" "}
             <Link

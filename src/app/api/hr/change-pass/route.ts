@@ -1,5 +1,5 @@
 import dbConnect from "@/lib/dbConnect";
-import UserModel from "@/model/User";
+import HrModel from "@/model/HR";
 import bcrypt from "bcryptjs";
 
 export async function PUT(request: Request) {
@@ -9,7 +9,7 @@ export async function PUT(request: Request) {
         const { userId, password } = await request.json();
 
         // Check if the user exists
-        const existingUser = await UserModel.findById(userId);
+        const existingUser = await HrModel.findById(userId);
         if (!existingUser) {
             return Response.json(
                 {

@@ -8,7 +8,11 @@ export async function GET() {
                 success: true,
             }
         )
-        response.cookies.set("token","",{
+        response.cookies.set("internal_token","",{
+            httpOnly:true,
+            expires: new Date(0)
+        });
+        response.cookies.set("external_token","",{
             httpOnly:true,
             expires: new Date(0)
         });

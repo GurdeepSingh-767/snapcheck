@@ -1,13 +1,13 @@
 import dbConnect from "@/lib/dbConnect";
-import UserModel from "@/model/User";
+import HrModel from "@/model/HR";
 import bcrypt from "bcryptjs"
 
 export async function POST(request: Request){
     await dbConnect()
 
     try {
-       const {name,email,password}= await request.json()
-       const existingUserByEmail= await UserModel.findOne({
+       const {name,email,role,company,password}= await request.json()
+       const existingUserByEmail= await HrModel.findOne({
         email
        })
        
@@ -23,9 +23,11 @@ export async function POST(request: Request){
         )  
        }else{
         const hashedPassword= await bcrypt.hash(password,10)
-        const newUser=new UserModel({
+        const newUser=new HrModel({
             name: name,
             email,
+            role,
+            company,
             password: hashedPassword,
         })
 

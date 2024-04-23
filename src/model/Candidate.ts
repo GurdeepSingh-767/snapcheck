@@ -14,7 +14,7 @@ export interface CandidateModel extends Document {
 }
 
 const CandidateSchema: Schema<CandidateModel> = new Schema({
-    internalHr: { type: mongoose.Schema.Types.ObjectId, ref: 'InternalHr' },
+    internalHr: { type: mongoose.Schema.Types.ObjectId, ref: 'Hr' },
     companyName: { type: String, required: true },
     plans: { type: String, required: true },
     firstName: { type: String, required: true },

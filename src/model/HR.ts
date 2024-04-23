@@ -1,13 +1,15 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 // Create and export the InternalHr model
-export interface InternalHrModel extends Document {
+export interface Hr extends Document {
     name: string;
     email: string;
+    role:string;
+    company:string;
     password: string;
 }
 
-const InternalHrSchema: Schema<InternalHrModel> = new Schema({
+const HrSchema: Schema<Hr> = new Schema({
     name: { type: String, required: [true,"Name is required"] },
     email: { 
         type: String, 
@@ -15,12 +17,17 @@ const InternalHrSchema: Schema<InternalHrModel> = new Schema({
         unique: true, 
         match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please enter a valid email'] 
     },
+    role: { type: String, required: [true,"role is required"] },
+    company: { type: String, required: [true,"Company name is required"] },
     password: { type: String, required: [true,"Password is required"] }
+},
+{
+    timestamps:true
 });
 
 
 
 
  
-const UserModel= (mongoose.models.InternalHr as mongoose.Model<InternalHrModel>)|| mongoose.model<InternalHrModel>("InternalHr", InternalHrSchema);
-export default UserModel;
+const HrModel= (mongoose.models.Hr as mongoose.Model<Hr>)|| mongoose.model<Hr>("Hr", HrSchema);
+export default HrModel;

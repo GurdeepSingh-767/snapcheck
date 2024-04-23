@@ -36,6 +36,9 @@ const formSchema = z.object({
 
 
 export function UserLoginForm() {
+
+  const router = useRouter();
+  const { toast } = useToast();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -44,54 +47,53 @@ export function UserLoginForm() {
     },
   });
 
-  const handleSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log({ values });
-  }; 
-  // const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  // const [error, setError] = useState<string>("");
-  // const router = useRouter();
-  // const { toast } = useToast();
+  const handleSubmit = async (values: z.infer<typeof formSchema>) => {
+    console.log(values.email );
+    const userData = {
+      email: values.email ,
+      password: values.password ,
+    };
 
-  // async function onSubmit(event: React.SyntheticEvent) {
-  //   event.preventDefault();
-  //   setIsLoading(true);
+    try {
+      const response = await fetch("/api/hr/sign-in", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData),
+      });
 
-  //   const formData = new FormData(event.target as HTMLFormElement);
-  //   const userData = {
-  //     email: formData.get("email"),
-  //     password: formData.get("password"),
-  //   };
-
-  //   try {
-  //     const response = await fetch("/api/users/sign-in", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify(userData),
-  //     });
-
-  //     if (!response.ok) {
-  //       const data = await response.json();
-  //       setError(data.message);
-  //       return;
-  //     }
-       
-  //     toast({
-  //       description: "Welcome!!",
-  //     }); 
-  //     setTimeout(() => {
-  //     router.push("/internal/dashboard");
-  //   }, 3000); 
-  //     const data = await response.json();
-  //     console.log(data); // Handle success response here
-  //   } catch (error) {
-  //     console.error("Error Signing in", error);
-  //     // Handle error here
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // }
+      if (!response.ok) {
+        const data = await response.json();
+        toast({
+          description: "Error from server",
+        }); 
+        return;
+      }
+      const data = await response.json();
+      toast({
+        description: "Welcome!!",
+      }); 
+      if(data.user.role=="internal"){
+        setTimeout(() => {
+          router.push(`/internal/dashboard?userId=${data.user.id}`);
+        }, 2000); 
+      }
+      else if(data.user.role=="external"){
+        setTimeout(() => {
+          router.push(`/external/dashboard?userId=${data.user.id}`);
+        }, 2000); 
+      }
+      
+      
+      console.log(data); // Handle success response here
+    } catch (error:any) {
+      console.error("Error Signing in", error);
+      toast({
+        description: "Cannot login",
+      });
+    }
+  };
 
   return (
     <div className="grid gap-6">

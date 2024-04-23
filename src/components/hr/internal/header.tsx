@@ -36,7 +36,7 @@ export default function Header() {
   const [data,setData] = React.useState("nothing")
   const handleLogout = async () => {
     try {
-      const response = await fetch("/api/users/sign-out", {
+      const response = await fetch("/api/hr/sign-out", {
         method: "GET",
       });
       if (response.ok) {
@@ -52,7 +52,7 @@ export default function Header() {
 
   useEffect(() => {
     const getDetails = async () =>{
-      const res:any = await fetch("/api/users/hr", {
+      const res:any = await fetch("/api/hr/hr", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

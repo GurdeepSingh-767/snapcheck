@@ -1,5 +1,5 @@
 import dbConnect from "@/lib/dbConnect";
-import UserModel from "@/model/User";
+import HrModel from "@/model/HR";
 import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 
@@ -7,10 +7,10 @@ export async function POST(request: NextRequest) {
   await dbConnect();
 
   try {
-    const { userId,token } = await request.json();
+    const { email } = await request.json();
 
     // Find the user by email
-    const user = await UserModel.findOne({ _id:userId });
+    const user = await HrModel.findOne({ email });
 
     // If user not found, return error
     if (!user) {
@@ -25,34 +25,21 @@ export async function POST(request: NextRequest) {
       );
     }
     const secret= user.password+process.env.TOKEN_SECRET;
-    const verify = await jwt.verify(token,secret);
-    if(verify){
-        const response = NextResponse.json(
-            {
-              success: true,
-              message: "User found",
-              user:{name: user.name,
-              id:user._id,}
-            },
-            {
-              status: 200,
-            }
-          );
-        return response;
-    }
-    else{
-        return NextResponse.json(
-            {
-              success: false,
-              message: "Error finding the user",
-            },
-            {
-              status: 500,
-            }
-          );
+    const token = await jwt.sign({email:user.email,id:user._id}, secret,{ expiresIn : '5m'});
+    const link=`${process.env.DOMAIN}/change-password?userId=${user._id}&token=${token}`
 
-    }
-    
+    const response = NextResponse.json(
+      {
+        success: true,
+        message: "User found",
+        link: link,
+      },
+      {
+        status: 200,
+      }
+    );
+
+    return response;
   } catch (error) {
     console.error("Error Finding the user", error);
     return Response.json(

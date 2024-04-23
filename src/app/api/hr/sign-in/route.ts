@@ -1,5 +1,5 @@
 import dbConnect from "@/lib/dbConnect";
-import UserModel from "@/model/User";
+import HrModel from "@/model/HR";
 import {NextRequest, NextResponse} from 'next/server';
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
         const { email, password } = await request.json();
         
         // Find the user by email
-        const user = await UserModel.findOne({ email });
+        const user = await HrModel.findOne({ email });
 
         // If user not found, return error
         if (!user) {
@@ -39,7 +39,8 @@ export async function POST(request: NextRequest) {
         const tokenData = {
             id: user._id,
             name : user.name,
-            email: user.email
+            email: user.email,
+            role:user.role
         }
 
         const token = await jwt.sign({tokenData:tokenData}, process.env.TOKEN_SECRET!,{ expiresIn : '1d'});
@@ -52,13 +53,22 @@ export async function POST(request: NextRequest) {
                 id: user._id,
                 name: user.name,
                 email: user.email,
+                role:user.role,
             },
         }, {
             status: 200,
         })
-        response.cookies.set("token",token,{
-            httpOnly:true
-        })
+        if(user.role=="internal"){
+            response.cookies.set("internal_token",token,{
+                httpOnly:true
+            })
+        }
+        else if(user.role=="external"){
+            response.cookies.set("external_token",token,{
+                httpOnly:true
+            })
+        }
+        
 
         return response
     } catch (error) {

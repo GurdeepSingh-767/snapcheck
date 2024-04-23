@@ -64,7 +64,7 @@ export default function CreateOrderForm() {
 
   useEffect(() => {
     const getDetails = async () =>{
-      const res:any = await fetch("/api/users/hr", {
+      const res:any = await fetch("/api/hr/hr", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

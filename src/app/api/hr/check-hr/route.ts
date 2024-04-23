@@ -1,5 +1,5 @@
 import dbConnect from "@/lib/dbConnect";
-import UserModel from "@/model/User";
+import HrModel from "@/model/HR";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
     const { email } = await request.json();
 
     // Find the user by email
-    const user = await UserModel.findOne({ email });
+    const user = await HrModel.findOne({ email });
 
     // If user not found, return error
     if (!user) {

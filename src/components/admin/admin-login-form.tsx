@@ -16,6 +16,9 @@ import {
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useToast } from "../ui/use-toast";
+import { ToastAction } from "../ui/toast";
+import { useRouter } from "next/navigation";
 
 // Define Zod schema for form validation
 const formSchema = z.object({
@@ -24,6 +27,10 @@ const formSchema = z.object({
 });
 
 export function AdminLoginForm() {
+
+  const router = useRouter();
+  const { toast } = useToast();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -32,10 +39,44 @@ export function AdminLoginForm() {
     },
   });
 
-  const handleSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log({ values });
-  };
+  const handleSubmit = async (values: z.infer<typeof formSchema>) => {
+    console.log(values.email );
+    const userData = {
+      email: values.email ,
+      password: values.password ,
+    };
 
+    try {
+      const response = await fetch("/api/admin/sign-in", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        toast({
+          description: "Error from server",
+        }); 
+        return;
+      }
+      const data = await response.json();
+      toast({
+        description: "Welcome!!",
+      }); 
+        setTimeout(() => {
+          router.push(`/admin/dashboard?userId=${data.user.id}`);
+        }, 2000);       
+      console.log(data); // Handle success response here
+    } catch (error:any) {
+      console.error("Error Signing in", error);
+      toast({
+        description: "Cannot login",
+      });
+    }
+  };
   return (
     <div className="grid gap-6">
       <Form {...form}>
