@@ -39,15 +39,7 @@ export default function LoginPageAdmin() {
             </div>
             <AdminLoginForm/>
 
-            <p className="px-8 text-center text-sm text-muted-foreground">
-              Don&apos;t have an account?{" "}
-              <Link
-                href="/signup"
-                className="underline underline-offset-4 hover:text-primary"
-              >
-                Signup
-              </Link>
-            </p>
+            
           </div>
         </div>
 

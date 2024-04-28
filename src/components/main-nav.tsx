@@ -1,107 +1,124 @@
 "use client";
-import { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
 import { ThemeToggle } from "./theme-toggle";
-import { Navlink } from "./landing/nav-link";
+import { Menu, X } from "lucide-react";
+import { motion } from "framer-motion";
 
-export function MainNav({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLElement>) {
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+const navItems = [
+  {
+    id: 1,
+    text: "Home",
+    link: "#",
+  },
+  {
+    id: 2,
+    text: "Products",
+    link: "#product",
+  },
+  {
+    id: 3,
+    text: "Customer",
+    link: "#customer",
+  },
+  {
+    id: 4,
+    text: "Pricing",
+    link: "#",
+  },
+  {
+    id: 5,
+    text: "Resources",
+    link: "#",
+  },
+  {
+    id: 6,
+    text: "Contact",
+    link: "#contact",
+  },
+];
 
-  const toggleDrawer = () => {
-    setIsDrawerOpen(!isDrawerOpen);
+export default function MainNav() {
+  const [openNavbar, setOpenNavbar] = useState(false);
+  const toggleNavbar = () => {
+    setOpenNavbar((openNavbar) => !openNavbar);
+  };
+  const closeNavbar = () => {
+    setOpenNavbar(false);
   };
 
   return (
     <>
-      <main className="px-2 sm:px-5 lg:px-20 bg-hero">
-        <div className="flex h-16 md:h-20 justify-between items-center ">
-          <div className="flex  ">
-            <Link
-              href="/"
-              className="font-semibold text-white text-2xl lg:text-3xl"
-            >
-              Snapcheck
+      <div
+        onClick={() => {
+          closeNavbar();
+        }}
+        aria-hidden="true"
+        className={`fixed inset-0 z-30 ${
+          openNavbar ? "flex lg:hidden" : "hidden"
+        }`}
+      />
+      <header className="sticky top-0 w-full flex items-center h-20 z-40 bg-background">
+        <nav className="relative mx-auto lg:max-w-7xl w-full px-5 sm:px-10 md:px-12 lg:px-5 flex gap-x-5 justify-between items-center">
+          <div className="flex items-center min-w-max">
+            <Link href="#" className="font-semibold flex items-center gap-x-2">
+              <span className="flex">
+                <span className="w-3 h-6 rounded-l-full flex bg-primary" />
+                <span className="w-3 h-6 rounded-r-full flex bg-background mt-2" />
+              </span>
+              <span className="text-lg">Snapcheck</span>
             </Link>
           </div>
-          {/* Menu icon */}
-          <button className="lg:hidden" onClick={toggleDrawer}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16m-7 6h7"
-              />
-            </svg>
-          </button>
-          <Navlink />
-
-          <div className="flex items-center space-x-4 hidden lg:block">
-            {/* <Separator className='text-white bg-white' orientation='horizontal'/> */}
-            <ThemeToggle />
-            <Button asChild>
-              <Link href="/login">Login</Link>
-            </Button>
-          </div>
-        </div>
-      </main>
-      {/* Side Drawer */}
-      {isDrawerOpen && (
-        <div className="lg:hidden fixed inset-y-0 right-0 w-72 bg-gray-900 bg-opacity-80 z-50">
-          <div className="flex flex-col items-start p-4">
-            <button onClick={toggleDrawer} className="self-end">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 text-white"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
-            <div className="flex flex-col items-start space-y-2">
-              <div className=" text-white text-md font-medium transition-colors  hover:text-primary cursor-pointer">
-                <Link href="/home">Home</Link>
-              </div>
-              <div className="text-white text-md font-semibold transition-colors  hover:text-primary cursor-pointer">
-                <Link href="#about">About Us</Link>
-              </div>
-              <div className=" text-white text-md font-medium transition-colors  hover:text-primary cursor-pointer">
-                <Link href="/services">Services</Link>
-              </div>
-              <div className=" text-white text-md font-medium transition-colors  hover:text-primary cursor-pointer">
-                <Link href="/blogs">Blogs</Link>
-              </div>
-              <div className=" text-white text-md font-medium transition-colors  hover:text-primary cursor-pointer">
-                <Link href="/contact">Contact Us</Link>
-              </div>
-            </div>
-            <div className="flex gap-4 mt-5">
+          <motion.div
+            initial={{ y: -10, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className={`absolute top-full left-0 bg-background lg:bg-transparent border-b py-8 lg:py-0 px-5 sm:px-10 md:px-12 lg:px-0 lg:border-none w-full lg:top-0 lg:relative lg:flex lg:justify-between duration-300 ease-linear ${
+              openNavbar
+                ? ""
+                : "translate-y-10 opacity-0 invisible lg:visible lg:translate-y-0 lg:opacity-100"
+            }`}
+          >
+            <ul className="flex flex-col lg:flex-row gap-6 lg:items-center lg:w-full lg:justify-center">
+              {navItems.map((navItem) => (
+                <motion.li key={navItem.id} whileHover={{ scale: 1.1 }}>
+                  <Link
+                    href={navItem.link}
+                    className="relative py-2.5 duration-300 ease-linear after:absolute after:w-full after:left-0 after:bottom-0 after:h-px after:rounded-md after:origin-left after:ease-linear after:duration-300 after:scale-x-0 hover:after:scale-100 after:bg-primary"
+                  >
+                    {navItem.text}
+                  </Link>
+                </motion.li>
+              ))}
+            </ul>
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4 lg:min-w-max mt-10 lg:mt-0">
               <ThemeToggle />
-              <Button asChild>
-                <Link href="/login">Login</Link>
-              </Button>
+              <Link
+                href="/login"
+                className="px-6 py-3 font-semibold duration-300 ease-linear flex justify-center w-full sm:w-auto border border-primary text-primary hover:text-white hover:bg-primary dark:text-white dark:bg-primary rounded-full"
+              >
+                Login
+              </Link>
             </div>
+          </motion.div>
+          <div className="flex items-center lg:hidden">
+            <motion.button
+              onClick={() => {
+                toggleNavbar();
+              }}
+              aria-label="toggle navbar"
+              whileTap={{ scale: 0.9 }}
+              className="outline-none pr-3 relative py-3 children:flex"
+            >
+              {openNavbar ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
+            </motion.button>
           </div>
-        </div>
-      )}
+        </nav>
+      </header>
     </>
   );
 }
