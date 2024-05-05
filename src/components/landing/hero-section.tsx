@@ -21,16 +21,15 @@ export default function HeroSection() {
             transition={{ duration: 0.8 }}
             className="lg:w-1/2 text-center lg:text-left max-w-2xl md:max-w-3xl mx-auto flex flex-col md-justify-center"
           >
-            <h1 className="font-semibold text-teal-950 dark:text-white font-display text-4xl md:text-5xl lg:text-6xl">
-              Manage with better{' '}
+            <h1 className="font-semibold t dark:text-white font-display text-4xl md:text-5xl lg:text-6xl">
+            A SURE WAY{' '}
               <span className="bg-clip-text text-transparent bg-gradient-to-br from-orange-600 to-orange-200">
-                experience
+              TO STREAMLINED 
               </span>{' '}
-              your Studio!
+              BACKGROUND SCREENINGS
             </h1>
             <p className="mt-8 mx-auto lg:mx-0 max-w-xl">
-              Are your background checks stuck in the past? Upgrade to a fast,
-              smooth, safe screening experience.
+            Automate most of your background check process - plus get expert answers and personalized support - to lighten manual workloads, maintain compliance, and hire the right candidates.
             </p>
             <div className="mt-8 flex flex-col sm:flex-row justify-center lg:justify-start gap-4 lg:max-w-none max-w-md mx-auto lg:mx-0">
               <motion.div

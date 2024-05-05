@@ -9,32 +9,37 @@ const navItems = [
   {
     id: 1,
     text: "Home",
-    link: "#",
+    link: "/",
   },
   {
     id: 2,
+    text: "About Us",
+    link: "#",
+  },
+  {
+    id: 3,
     text: "Products",
     link: "#product",
   },
   {
-    id: 3,
-    text: "Customer",
-    link: "#customer",
-  },
-  {
-    id: 4,
-    text: "Pricing",
-    link: "#",
-  },
-  {
     id: 5,
+    text: "Solutions",
+    link: "#",
+  }, 
+  {
+    id: 6,
+    text: "Pricing",
+    link: "/pricing",
+  },
+  {
+    id: 7,
     text: "Resources",
     link: "#",
   },
   {
-    id: 6,
-    text: "Contact",
-    link: "#contact",
+    id: 8,
+    text: "Contact us",
+    link: "/contact",
   },
 ];
 
@@ -61,7 +66,7 @@ export default function MainNav() {
       <header className="sticky top-0 w-full flex items-center h-20 z-40 bg-background">
         <nav className="relative mx-auto lg:max-w-7xl w-full px-5 sm:px-10 md:px-12 lg:px-5 flex gap-x-5 justify-between items-center">
           <div className="flex items-center min-w-max">
-            <Link href="#" className="font-semibold flex items-center gap-x-2">
+            <Link href="/" className="font-semibold flex items-center gap-x-2">
               <span className="flex">
                 <span className="w-3 h-6 rounded-l-full flex bg-primary" />
                 <span className="w-3 h-6 rounded-r-full flex bg-background mt-2" />
@@ -84,7 +89,7 @@ export default function MainNav() {
                 <motion.li key={navItem.id} whileHover={{ scale: 1.1 }}>
                   <Link
                     href={navItem.link}
-                    className="relative py-2.5 duration-300 ease-linear after:absolute after:w-full after:left-0 after:bottom-0 after:h-px after:rounded-md after:origin-left after:ease-linear after:duration-300 after:scale-x-0 hover:after:scale-100 after:bg-primary"
+                    className="relative py-2.5 duration-100 ease-linear after:absolute after:w-full after:left-0 after:bottom-0 after:h-px after:rounded-md after:origin-left after:ease-linear after:duration-300 after:scale-x-0 hover:after:scale-100 after:bg-primary"
                   >
                     {navItem.text}
                   </Link>
