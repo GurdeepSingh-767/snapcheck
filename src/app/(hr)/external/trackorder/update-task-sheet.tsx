@@ -1,32 +1,29 @@
-"use client";
-
-import * as React from "react";
+'use client'
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
 import * as z from "zod";
-import {   useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button"
+import { Textarea } from "@/components/ui/textarea";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+  } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import MultipleSelector, { Option } from '@/components/ui/multiple-selector';
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area"
+
+
+interface UpdateTaskSheetProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}
 
 
 const optionSchema = z.object({
@@ -34,6 +31,17 @@ const optionSchema = z.object({
   value: z.string(),
   disable: z.boolean().optional(),
 });
+
+
+const OPTIONS: Option[] = [
+  { label: 'Plan 1', value: 'plan1' },
+  { label: 'Plan 2', value: 'plan2' },
+  { label: 'Plan 3', value: 'plan3' },
+  { label: 'Plan 4', value: 'plan4' },
+  { label: 'Plan 5', value: 'plan5', disable: true },
+  { label: 'Plan 6', value: 'plan6', disable: true },
+ 
+];
 
 // Define Zod schema for form validation
 const formSchema = z.object({
@@ -57,105 +65,38 @@ const formSchema = z.object({
     .min(6, { message: "Government ID must be at least 6 characters long" }),
 });
 
-
-const OPTIONS: Option[] = [
-  { label: 'Plan 1', value: 'plan1' },
-  { label: 'Plan 2', value: 'plan2' },
-  { label: 'Plan 3', value: 'plan3' },
-  { label: 'Plan 4', value: 'plan4' },
-  { label: 'Plan 5', value: 'plan5', disable: true },
-  { label: 'Plan 6', value: 'plan6', disable: true },
- 
-];
-
-export default function CreateOrderForm() {
-  const [user, setUser] = useState({id:"",name:"",email:""});
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      firstName: "",
-      lastName: "",
-      email: "",
-      contactUs: "",
-      govtID: "",
-    },
-  });
-  const router= useRouter();
-
-  useEffect(() => {
-    const getDetails = async () =>{
-      const res:any = await fetch("/api/hr/hr", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        }
-      });
-      if (res.ok) {
-        const data = await res.json(); // Parse JSON response body
-        console.log("HR details:", data.data._id);
-        setUser({id:data.data._id,name:data.data.name,email:data.data.email})
-        console.log(user);
-        
-
-      } else {
-        // Handle non-successful response
-        console.error("Failed to fetch HR details:", res.statusText);
-      };
-      
-    }
-    getDetails();
-    
-  }, []);
-
-  const handleSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log({ values });
-    console.log("user",user);
-
-    const userData = {
-      internalHr:user.id,
-      companyName: values.company,
-      plans: values.plan,
-      firstName: values.firstName,
-      lastName: values.lastName,
-      email: values.email,
-      contactNumber: values.contactUs,
-      ssnId: values.govtID,
-      status: "created", 
-    };
-
-    try {
-      const response = await fetch("/api/candidate/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+export function UpdateTaskSheet({ open, onOpenChange }: UpdateTaskSheetProps) {
+    const form = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+          firstName: "",
+          lastName: "",
+          email: "",
+          contactUs: "",
+          govtID: "",
         },
-        body: JSON.stringify(userData),
       });
 
-      if (!response.ok) {
-        throw new Error("Failed to register user");
+  
+
+      const handleSubmit = async (values: z.infer<typeof formSchema>) => {
+        console.log({ values })
       }
-      router.push("/internal/dashboard");
-      const data = await response.json();
-      console.log(data); // Handle success response here
-    } catch (error) {
-      console.error("Error registering user", error);
-      // Handle error here
-    }
-    
-  };
 
   return (
-    <div className="flex flex-col  p-4 w-full lg:w-3/4 sm:gap-4 sm:py-4 ">
-      <Card>
-        <CardTitle className=" text-xl border-b px-6 py-4">
-          Create new order
-        </CardTitle>
-        <CardContent>
-          <Form {...form}>
+   
+    <Sheet onOpenChange={onOpenChange} open={open}>
+      
+      <SheetContent className="flex flex-col gap-6 sm:max-w-md">
+        <SheetHeader className="text-left">
+          <SheetTitle>Update Task</SheetTitle>
+          <SheetDescription>Update the task details and save the changes</SheetDescription>
+        </SheetHeader>
+        <ScrollArea className="h-screen ">
+        <Form {...form}>
             <form
               onSubmit={form.handleSubmit(handleSubmit)}
-              className="space-y-3"
+              className="space-y-3 p-5"
             >
               
             <FormField
@@ -350,9 +291,11 @@ export default function CreateOrderForm() {
                 <Button type="submit">Submit</Button>
             
             </form>
-          </Form>
-        </CardContent>
-      </Card>
-    </div>
+          </Form> 
+          </ScrollArea>
+      </SheetContent>
+      
+    </Sheet>
+  
   );
 }
