@@ -26,9 +26,18 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import MultipleSelector, { Option } from '@/components/ui/multiple-selector';
+
+
+const optionSchema = z.object({
+  label: z.string(),
+  value: z.string(),
+  disable: z.boolean().optional(),
+});
 
 // Define Zod schema for form validation
 const formSchema = z.object({
+  frameworks: z.array(optionSchema).min(1),
   company: z.enum(["Company 1", "Company 2"]),
   plan: z.enum(["Plan 1", "Plan 2"]),
   firstName: z
@@ -47,6 +56,17 @@ const formSchema = z.object({
     .string()
     .min(6, { message: "Government ID must be at least 6 characters long" }),
 });
+
+
+const OPTIONS: Option[] = [
+  { label: 'Plan 1', value: 'plan1' },
+  { label: 'Plan 2', value: 'plan2' },
+  { label: 'Plan 3', value: 'plan3' },
+  { label: 'Plan 4', value: 'plan4' },
+  { label: 'Plan 5', value: 'plan5', disable: true },
+  { label: 'Plan 6', value: 'plan6', disable: true },
+ 
+];
 
 export default function CreateOrderForm() {
   const [user, setUser] = useState({id:"",name:"",email:""});
@@ -161,6 +181,30 @@ export default function CreateOrderForm() {
               );
             }}
           />
+
+           <FormField
+          control={form.control}
+          name="frameworks"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Plan</FormLabel>
+              <FormControl>
+                <MultipleSelector
+                  value={field.value}
+                  onChange={field.onChange}
+                  defaultOptions={OPTIONS}
+                  placeholder="Select a plan"
+                  emptyIndicator={
+                    <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
+                      no results found.
+                    </p>
+                  }
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
 
 <FormField
