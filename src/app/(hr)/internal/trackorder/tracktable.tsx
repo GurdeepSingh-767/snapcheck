@@ -43,6 +43,8 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { Separator } from "@/components/ui/separator";
+import { UpdateTaskSheet } from "./update-task-sheet";
 
 interface Order {
   name: string;
@@ -56,28 +58,28 @@ interface Order {
 const sampleData: Order[] = [
   {
     name: "Laser Lemonade Machine",
-    adjudication: "NA",
+    adjudication: "tes1@gmail.com",
     status: "Due",
     created: "2023-07-12 10:42 AM",
     completed: "2023-07-12 10:42 AM",
   },
   {
     name: "Laser Lemonade Machine",
-    adjudication: "NA",
+    adjudication: "tes1@gmail.com",
     status: "Created",
     created: "2023-07-12 10:42 AM",
     completed: "2023-07-12 10:42 AM",
   },
   {
     name: "Laser Lemonade Machine",
-    adjudication: "NA",
+    adjudication: "tes1@gmail.com",
     status: "Started",
     created: "2023-07-12 10:42 AM",
     completed: "2023-07-12 10:42 AM",
   },
   {
     name: "Laser Lemonade Machine",
-    adjudication: "NA",
+    adjudication: "tes1@gmail.com",
     status: "Completed",
     created: "2023-07-12 10:42 AM",
     completed: "2023-07-12 10:42 AM",
@@ -85,49 +87,49 @@ const sampleData: Order[] = [
 
   {
     name: "Laser Lemonade Machine",
-    adjudication: "NA",
+    adjudication: "tes1@gmail.com",
     status: "Completed",
     created: "2023-07-12 10:42 AM",
     completed: "2023-07-12 10:42 AM",
   },
   {
     name: "Laser Lemonade Machine",
-    adjudication: "NA",
+    adjudication: "tes1@gmail.com",
     status: "Completed",
     created: "2023-07-12 10:42 AM",
     completed: "2023-07-12 10:42 AM",
   },
   {
     name: "Laser Lemonade Machine",
-    adjudication: "NA",
+    adjudication: "tes1@gmail.com",
     status: "Completed",
     created: "2023-07-12 10:42 AM",
     completed: "2023-07-12 10:42 AM",
   },
   {
     name: "Laser Lemonade Machine",
-    adjudication: "NA",
+    adjudication: "tes1@gmail.com",
     status: "Completed",
     created: "2023-07-12 10:42 AM",
     completed: "2023-07-12 10:42 AM",
   },
   {
     name: "Laser Lemonade Machine",
-    adjudication: "NA",
+    adjudication: "tes1@gmail.com",
     status: "Completed",
     created: "2023-07-12 10:42 AM",
     completed: "2023-07-12 10:42 AM",
   },
   {
     name: "Laser Lemonade Machine",
-    adjudication: "NA",
+    adjudication: "tes1@gmail.com",
     status: "Completed",
     created: "2023-07-12 10:42 AM",
     completed: "2023-07-12 10:42 AM",
   },
   {
     name: "Laser Lemonade Machine",
-    adjudication: "NA",
+    adjudication: "tes1@gmail.com",
     status: "Completed",
     created: "2023-07-12 10:42 AM",
     completed: "2023-07-12 10:42 AM",
@@ -185,7 +187,9 @@ export default function TrackOrderTable() {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = currentPage * itemsPerPage;
 
-  
+  const [isUpdateSheetOpen, setIsUpdateSheetOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<Order | null>(null);
+
 
   // Function to handle page change
   const handlePageChange = (page: number) => {
@@ -213,6 +217,12 @@ export default function TrackOrderTable() {
    
     anchorElement.remove();
   };
+
+  const handleEditTask = (task: Order) => {
+    setSelectedTask(task);
+    setIsUpdateSheetOpen(true);
+  };
+
   
   return (
     <main className="grid flex-1  items-start gap-4 p-4 sm:px-6 sm:py-4 md:gap-8">
@@ -256,7 +266,7 @@ export default function TrackOrderTable() {
                   <TableRow>
                     <TableHead>Name</TableHead>
                     <TableHead className="hidden lg:table-cell">
-                      Adjudication
+                     Email
                     </TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead className="hidden lg:table-cell">
@@ -287,7 +297,7 @@ export default function TrackOrderTable() {
                         <TableCell className="hidden lg:table-cell">
                           {order.created}
                         </TableCell>
-                        <TableCell className="hidden hidden lg:table-cell">
+                        <TableCell className="hidden  lg:table-cell">
                           {order.completed}
                         </TableCell>
                         <TableCell>
@@ -306,6 +316,9 @@ export default function TrackOrderTable() {
                             <DropdownMenuItem >Preview</DropdownMenuItem>
                               <DropdownMenuItem onClick={handleDownloadReport}>Download report</DropdownMenuItem>
                               <DropdownMenuItem>Share</DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleEditTask(order)}>Edit</DropdownMenuItem>
+                            
+                <Separator/>
                               <DropdownMenuItem className="text-destructive">
                                 Delete
                               </DropdownMenuItem>
@@ -347,6 +360,13 @@ export default function TrackOrderTable() {
             </CardFooter>
           </Card>
         </TabsContent>
+        {selectedTask && (
+        <UpdateTaskSheet
+         
+          open={isUpdateSheetOpen}
+          onOpenChange={(open) => setIsUpdateSheetOpen(open)}
+        />
+      )}
       </Tabs>
     </main>
   );
