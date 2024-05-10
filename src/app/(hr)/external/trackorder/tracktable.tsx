@@ -44,7 +44,8 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { Separator } from "@/components/ui/separator";
-import { UpdateTaskSheet } from "./update-tasks-sheet";
+import { UpdateSheet } from "./update-sheet";
+
 
 interface Order {
   name: string;
