@@ -1,374 +1,301 @@
-"use client";
-
+'use client'
 import React, { useState } from "react";
-import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@/components/ui/button"
+import { Textarea } from "@/components/ui/textarea";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-
-import { PlusCircle, MoreHorizontal } from "lucide-react";
-
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
-import { Separator } from "@/components/ui/separator";
-import { UpdateTaskSheet } from "./update-sheet";
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+  } from "@/components/ui/form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import MultipleSelector, { Option } from '@/components/ui/multiple-selector';
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 
-interface Order {
-  name: string;
-  adjudication: string;
-  status: string;
-  created: string;
-  completed: string;
+interface UpdateTaskSheetProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
-// Sample JSON data conforming to the Order interface
-const sampleData: Order[] = [
-  {
-    name: "Laser Lemonade Machine",
-    adjudication: "tes1@gmail.com",
-    status: "Due",
-    created: "2023-07-12 10:42 AM",
-    completed: "2023-07-12 10:42 AM",
-  },
-  {
-    name: "Laser Lemonade Machine",
-    adjudication: "tes1@gmail.com",
-    status: "Created",
-    created: "2023-07-12 10:42 AM",
-    completed: "2023-07-12 10:42 AM",
-  },
-  {
-    name: "Laser Lemonade Machine",
-    adjudication: "tes1@gmail.com",
-    status: "Started",
-    created: "2023-07-12 10:42 AM",
-    completed: "2023-07-12 10:42 AM",
-  },
-  {
-    name: "Laser Lemonade Machine",
-    adjudication: "tes1@gmail.com",
-    status: "Completed",
-    created: "2023-07-12 10:42 AM",
-    completed: "2023-07-12 10:42 AM",
-  },
 
-  {
-    name: "Laser Lemonade Machine",
-    adjudication: "tes1@gmail.com",
-    status: "Completed",
-    created: "2023-07-12 10:42 AM",
-    completed: "2023-07-12 10:42 AM",
-  },
-  {
-    name: "Laser Lemonade Machine",
-    adjudication: "tes1@gmail.com",
-    status: "Completed",
-    created: "2023-07-12 10:42 AM",
-    completed: "2023-07-12 10:42 AM",
-  },
-  {
-    name: "Laser Lemonade Machine",
-    adjudication: "tes1@gmail.com",
-    status: "Completed",
-    created: "2023-07-12 10:42 AM",
-    completed: "2023-07-12 10:42 AM",
-  },
-  {
-    name: "Laser Lemonade Machine",
-    adjudication: "tes1@gmail.com",
-    status: "Completed",
-    created: "2023-07-12 10:42 AM",
-    completed: "2023-07-12 10:42 AM",
-  },
-  {
-    name: "Laser Lemonade Machine",
-    adjudication: "tes1@gmail.com",
-    status: "Completed",
-    created: "2023-07-12 10:42 AM",
-    completed: "2023-07-12 10:42 AM",
-  },
-  {
-    name: "Laser Lemonade Machine",
-    adjudication: "tes1@gmail.com",
-    status: "Completed",
-    created: "2023-07-12 10:42 AM",
-    completed: "2023-07-12 10:42 AM",
-  },
-  {
-    name: "Laser Lemonade Machine",
-    adjudication: "tes1@gmail.com",
-    status: "Completed",
-    created: "2023-07-12 10:42 AM",
-    completed: "2023-07-12 10:42 AM",
-  },
-  {
-    name: "Laser Lemonade Machine",
-    adjudication: "NA",
-    status: "Completed",
-    created: "2023-07-12 10:42 AM",
-    completed: "2023-07-12 10:42 AM",
-  },
-  {
-    name: "Laser Lemonade Machine",
-    adjudication: "NA",
-    status: "Completed",
-    created: "2023-07-12 10:42 AM",
-    completed: "2023-07-12 10:42 AM",
-  },
+const optionSchema = z.object({
+  label: z.string(),
+  value: z.string(),
+  disable: z.boolean().optional(),
+});
 
 
+const OPTIONS: Option[] = [
+  { label: 'Plan 1', value: 'plan1' },
+  { label: 'Plan 2', value: 'plan2' },
+  { label: 'Plan 3', value: 'plan3' },
+  { label: 'Plan 4', value: 'plan4' },
+  { label: 'Plan 5', value: 'plan5', disable: true },
+  { label: 'Plan 6', value: 'plan6', disable: true },
+ 
 ];
 
+// Define Zod schema for form validation
+const formSchema = z.object({
+  frameworks: z.array(optionSchema).min(1),
+  company: z.enum(["Company 1", "Company 2"]),
+  plan: z.enum(["Plan 1", "Plan 2"]),
+  firstName: z
+    .string()
+    .min(2, { message: "First name must be at least 2 characters long" }),
+  lastName: z
+    .string()
+    .min(2, { message: "Last name must be at least 2 characters long" }),
+  email: z.string().email({ message: "Invalid email address" }),
+  contactUs: z
+    .string()
+    .min(10, {
+      message: "Contact information must 10 digit",
+    }),
+  govtID: z
+    .string()
+    .min(6, { message: "Government ID must be at least 6 characters long" }),
+});
 
-enum BadgeVariant {
-  Default = "default",
-  Destructive = "destructive",
-  Outline = "outline",
-  Secondary = "secondary",
-  Pending = "pending",
-  Success = "success",
-  OutlineDestructive = "outlinedestructive",
-}
-
-export default function TrackOrderTable() {
-  const router = useRouter();
-
-  function getBadgeVariant(status: string): BadgeVariant {
-    switch (status.toLowerCase()) {
-      case "started":
-        return BadgeVariant.Outline;
-      case "created":
-        return BadgeVariant.Pending;
-      case "completed":
-        return BadgeVariant.Success;
-      case "due":
-        return BadgeVariant.OutlineDestructive;
-      default:
-        return BadgeVariant.Default;
-    }
-  }
-
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 8;
-
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = currentPage * itemsPerPage;
-
-  const [isUpdateSheetOpen, setIsUpdateSheetOpen] = useState(false);
-  const [selectedTask, setSelectedTask] = useState<Order | null>(null);
-
-
-  // Function to handle page change
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
-
-
-  // Function to handle download report
-  const handleDownloadReport = () => {
-   
-    const pdfUrl = "/pdf/smaple.pdf";
-  
-   
-    const anchorElement = document.createElement("a");
-  
-    
-    anchorElement.href = pdfUrl;
-  
-   
-    anchorElement.download = "report.pdf";
-  
-   
-    anchorElement.click();
-  
-   
-    anchorElement.remove();
-  };
-
-  const handleEditTask = (task: Order) => {
-    setSelectedTask(task);
-    setIsUpdateSheetOpen(true);
-  };
+export function UpdateTaskSheet({ open, onOpenChange }: UpdateTaskSheetProps) {
+    const form = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+          firstName: "",
+          lastName: "",
+          email: "",
+          contactUs: "",
+          govtID: "",
+        },
+      });
 
   
+
+      const handleSubmit = async (values: z.infer<typeof formSchema>) => {
+        console.log({ values })
+      }
+
   return (
-    <main className="grid flex-1  items-start gap-4 p-4 sm:px-6 sm:py-4 md:gap-8">
-      <Tabs defaultValue="all">
-        <div className="flex items-center">
-          <TabsList>
-            <TabsTrigger value="all">All</TabsTrigger>
-            <TabsTrigger value="create">Started</TabsTrigger>
-            <TabsTrigger value="active" className="hidden sm:flex">
-              Created
-            </TabsTrigger>
-            <TabsTrigger value="done">Completed</TabsTrigger>
-            <TabsTrigger value="draft" className="hidden sm:flex">
-              Due
-            </TabsTrigger>
-          </TabsList>
-          <div className="ml-auto flex items-center gap-2">
-            <Button
-              size="sm"
-              className="h-7 gap-1"
-              onClick={() => router.push("/internal/createorder")}
+   
+    <Sheet onOpenChange={onOpenChange} open={open}>
+      
+      <SheetContent className="flex flex-col gap-6 sm:max-w-md">
+        <SheetHeader className="text-left">
+          <SheetTitle>Update Task</SheetTitle>
+          <SheetDescription>Update the task details and save the changes</SheetDescription>
+        </SheetHeader>
+        <ScrollArea className="h-screen ">
+        <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(handleSubmit)}
+              className="space-y-3 p-5"
             >
-              <PlusCircle className="h-3.5 w-3.5" />
-              <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                Create order
-              </span>
-            </Button>
-          </div>
-        </div>
-        <TabsContent value="all">
-          <Card x-chunk="dashboard-06-chunk-0">
-            <CardHeader>
-              <CardTitle>Track Order</CardTitle>
-              <CardDescription>
-                Manage your order and view their status
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead className="hidden lg:table-cell">
-                     Email
-                    </TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="hidden lg:table-cell">
-                      Created
-                    </TableHead>
-                    <TableHead className="hidden lg:table-cell">
-                      Completed
-                    </TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {sampleData
-                    .slice(startIndex, endIndex)
-                    .map((order, index) => (
-                      <TableRow key={index}>
-                        <TableCell className="font-medium">
-                          {order.name}
-                        </TableCell>
-                        <TableCell className="font-medium hidden lg:table-cell">
-                          {order.adjudication}
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant={getBadgeVariant(order.status)}>
-                            {order.status}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="hidden lg:table-cell">
-                          {order.created}
-                        </TableCell>
-                        <TableCell className="hidden  lg:table-cell">
-                          {order.completed}
-                        </TableCell>
-                        <TableCell>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button
-                                aria-haspopup="true"
-                                size="icon"
-                                variant="ghost"
-                              >
-                                <MoreHorizontal className="h-4 w-4" />
-                                <span className="sr-only">Toggle menu</span>
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                            <DropdownMenuItem >Preview</DropdownMenuItem>
-                              <DropdownMenuItem onClick={handleDownloadReport}>Download report</DropdownMenuItem>
-                              <DropdownMenuItem>Share</DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => handleEditTask(order)}>Edit</DropdownMenuItem>
-                            
-                <Separator/>
-                              <DropdownMenuItem className="text-destructive">
-                                Delete
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-            <CardFooter>
-              {/* <div className="text-xs text-muted-foreground">
-                Showing <strong>{startIndex + 1}-{Math.min(endIndex, sampleData.length)}</strong> of <strong>{sampleData.length}</strong> Orders
-              </div> */}
-              {/* Pagination controls */}
-              <Pagination>
-                <PaginationContent>
-                  <PaginationItem>
-                    <PaginationPrevious
-                      href="#"
-                      onClick={() => handlePageChange(currentPage - 1)}
-                    />
-                  </PaginationItem>
-                  <PaginationItem>
-                    <PaginationLink href="#">{currentPage}</PaginationLink>
-                  </PaginationItem>
-                  <PaginationItem>
-                    <PaginationEllipsis />
-                  </PaginationItem>
-                  <PaginationItem>
-                    <PaginationNext
-                      href="#"
-                      onClick={() => handlePageChange(currentPage + 1)}
-                    />
-                  </PaginationItem>
-                </PaginationContent>
-              </Pagination>
-            </CardFooter>
-          </Card>
-        </TabsContent>
-        {selectedTask && (
-        <UpdateTaskSheet
-         
-          open={isUpdateSheetOpen}
-          onOpenChange={(open) => setIsUpdateSheetOpen(open)}
+              
+            <FormField
+            control={form.control}
+            name="company"
+            render={({ field }) => {
+              return (
+                <FormItem>
+                  <FormLabel>Select company</FormLabel>
+                  <Select onValueChange={field.onChange}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a company" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="Company 1">Company 1</SelectItem>
+                      <SelectItem value="Company 2">Company 2</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
+          />
+
+           <FormField
+          control={form.control}
+          name="frameworks"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Plan</FormLabel>
+              <FormControl>
+                <MultipleSelector
+                  value={field.value}
+                  onChange={field.onChange}
+                  defaultOptions={OPTIONS}
+                  placeholder="Select a plan"
+                  emptyIndicator={
+                    <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
+                      no results found.
+                    </p>
+                  }
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-      )}
-      </Tabs>
-    </main>
+
+
+<FormField
+            control={form.control}
+            name="plan"
+            render={({ field }) => {
+              return (
+                <FormItem>
+                  <FormLabel>Select plan</FormLabel>
+                  <Select onValueChange={field.onChange}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a plan " />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="Plan 1">Plan 1</SelectItem>
+                      <SelectItem value="Plan 2">Plan 2</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
+          />
+             
+
+              <FormField
+                control={form.control}
+                name="firstName"
+                render={({ field }) => {
+                  return (
+                    <FormItem>
+                      <FormLabel>First name</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter first name"
+                          type="text"
+                          {...field}
+                          autoCapitalize="none"
+                          autoComplete="text"
+                          autoCorrect="off"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
+              />
+
+              <FormField
+                control={form.control}
+                name="lastName"
+                render={({ field }) => {
+                  return (
+                    <FormItem>
+                      <FormLabel>Last name</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter  last name"
+                          type="text"
+                          {...field}
+                          autoCapitalize="none"
+                          autoComplete="text"
+                          autoCorrect="off"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
+              />
+
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => {
+                  return (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter your email"
+                          type="email"
+                          autoCapitalize="none"
+                          autoComplete="email"
+                          autoCorrect="off"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
+              />
+
+              <FormField
+                control={form.control}
+                name="contactUs"
+                render={({ field }) => {
+                  return (
+                    <FormItem>
+                      <FormLabel>Contact Us</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter  contact information"
+                          type="tel"
+                          autoComplete="tel"
+                          autoCapitalize="none"
+                          autoCorrect="off"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
+              />
+
+              <FormField
+                control={form.control}
+                name="govtID"
+                render={({ field }) => {
+                  return (
+                    <FormItem>
+                      <FormLabel>Government Identification No</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter  government ID"
+                          type="number"
+                          autoComplete="govt-id"
+                          autoCapitalize="none"
+                          autoCorrect="off"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
+              />
+             
+                <Button type="submit">Submit</Button>
+            
+            </form>
+          </Form> 
+          </ScrollArea>
+      </SheetContent>
+      
+    </Sheet>
+  
   );
 }
