@@ -12,11 +12,11 @@ export const sidebarNavItems = [
     href: "/admin/internal",
     icon: <UserPlus size={20} />,
   },
-  {
-    title: "External HR",
-    href: "/admin/external",
-    icon: <ListPlus size={20} />,
-  },
+  // {
+  //   title: "External HR",
+  //   href: "/admin/external",
+  //   icon: <ListPlus size={20} />,
+  // },
   {
     title: "Plan Request",
     href: "/admin/plans",

@@ -1,58 +1,47 @@
-"use client";
-
-import * as React from "react";
-import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { CheckIcon, PlusCircle, Router } from "lucide-react";
-import Link from "next/link";
-import { InternalHrSchema } from "@/schemas/signUpSchema";
-import * as z from "zod";
+'use client'
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
+import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@/components/ui/button"
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-  } from "@/components/ui/dialog"
-  import MultipleSelector, { Option } from '@/components/ui/multiple-selector';
-  import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-  } from "@/components/ui/select";
+    Form,
+    FormControl,
+    FormDescription,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+  } from "@/components/ui/form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import MultipleSelector, { Option } from '@/components/ui/multiple-selector';
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area"
 import { internalFormSchema } from "@/schemas/internalFormSchema";
+import { CheckIcon } from "lucide-react";
 
 
-  const OPTIONS: Option[] = [
-    { label: 'Plan 1', value: 'item1' },
-    { label: 'Plan 2', value: 'item2' },
-    { label: 'Plan 5', value: 'item5', disable: true },
-    { label: 'Plan 6', value: 'item6', disable: true },
-   
-  ];
 
+interface UpdateInternalHrSheetProps {
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
+    plan: any; 
+  }
+
+
+
+
+const OPTIONS: Option[] = [
+  { label: 'Item 1', value: 'item1' },
+  { label: 'Item 2', value: 'item2' },
+  { label: 'Item 5', value: 'item5', disable: true },
+  { label: 'Item 6', value: 'item6', disable: true },
  
+];
 
+export function UpdateInternalHrSheet({ open, onOpenChange, plan }: UpdateInternalHrSheetProps) {
 
-
-export function  CreateInternalForm() {
-
-  const router = useRouter();
 
   const form = useForm<z.infer<typeof internalFormSchema>>({
     resolver: zodResolver(internalFormSchema),
@@ -66,27 +55,19 @@ export function  CreateInternalForm() {
   const handleSubmit = async (values: z.infer<typeof internalFormSchema>) => {
     console.log({ values });
   };
-
-
+  
   return (
-<> 
- <Dialog>
-<DialogTrigger asChild>
-                  <Button size="sm" className="h-7 gap-1">
-                    <PlusCircle className="h-3.5 w-3.5" />
-                    <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                      Create HR
-                    </span>
-                  </Button>
-                </DialogTrigger>
-    <DialogContent>
-      <DialogHeader>
-        <DialogTitle>Create a new internal HR</DialogTitle>
-        <DialogDescription>
-        <div className="grid gap-6">
-    
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-3">
+   
+    <Sheet onOpenChange={onOpenChange} open={open}>
+      
+      <SheetContent className="flex flex-col gap-6 sm:max-w-md">
+        <SheetHeader className="text-left">
+          <SheetTitle>Update Internal HR</SheetTitle>
+          <SheetDescription>Update the HR details and save the changes</SheetDescription>
+        </SheetHeader>
+        <ScrollArea className="h-screen ">
+        <Form {...form}>
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-3 p-5">
         <FormField
           control={form.control}
           name="fullName"
@@ -212,13 +193,10 @@ export function  CreateInternalForm() {
         </Button>
       </form>
     </Form>
-  </div>
-        </DialogDescription>
-      </DialogHeader>
-    </DialogContent>
-  </Dialog>
-    
-    </>
-
+          </ScrollArea>
+      </SheetContent>
+      
+    </Sheet>
+  
   );
 }

@@ -3,9 +3,16 @@
 import * as React from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
-
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 interface SidebarNavProps extends React.HTMLAttributes<HTMLElement> {
   items: {
     href: string;
@@ -13,6 +20,14 @@ interface SidebarNavProps extends React.HTMLAttributes<HTMLElement> {
     icon: React.ReactNode; // New property for icon
   }[];
 }
+
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+  TooltipProvider
+} from "@/components/ui/tooltip";
+import { LogOut } from "lucide-react";
 
 export default function SideNav({
   className,
@@ -24,6 +39,7 @@ export default function SideNav({
   return (
     <>
       {/* Side Panel */}
+      
       <aside className=" inset-y-0 h-full bg-muted/40  left-0 z-10 hidden w-60 flex-col border-r sm:flex">
         <nav className="flex flex-col  items-center gap-2  sm:py-4">
           <div className="flex  h-14 w-full items-center border-b  lg:h-[54px]">
@@ -46,7 +62,7 @@ export default function SideNav({
                 className={cn(
                   buttonVariants({ variant: "secondary" }),
                   pathname === item.href
-                    ? "bg-primary  text-white"
+                    ? "bg-primary   text-white dark:text-white"
                     : " bg-muted/40 hover:bg-background ",
                   "flex items-center justify-start px-4 py-2"
                 )}
@@ -57,6 +73,7 @@ export default function SideNav({
             ))}
           </nav>
         </nav>
+       
       </aside>
     </>
   );
