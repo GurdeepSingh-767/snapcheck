@@ -14,7 +14,7 @@ export default function CreateOrder() {
         <Header />
         <Separator />
       </div>
-      <CreateOrderForm />
+{/*       <CreateOrderForm /> */}
     </>
   );
 }
