@@ -3,16 +3,10 @@ import Link from "next/link"
 import {
   ArrowUpRight,
   CreditCard,
-  DollarSign,
   ListTodo,
   UserRoundSearch,
   Users,
 } from "lucide-react"
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -46,7 +40,6 @@ export function AdminDashboard() {
           throw new Error('Failed to fetch plans');
         }
         const data = await response.json();
-
         setPlans(data.data); 
       } catch (error) {
         console.error('Error fetching plans:', error);
@@ -60,7 +53,6 @@ export function AdminDashboard() {
           throw new Error('Failed to fetch items');
         }
         const data = await response.json();
-
         setItems(data.data); 
       } catch (error) {
         console.error('Error fetching items:', error);
@@ -74,7 +66,6 @@ export function AdminDashboard() {
           throw new Error('Failed to fetch HRs');
         }
         const data = await response.json();
-
         setHRs(data.data);
         const lastIndex = data.data.length - 1;
         const startIndex = Math.max(0, lastIndex - 4);
@@ -94,7 +85,7 @@ export function AdminDashboard() {
       <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
         <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
           <Link href="/admin/internal">
-            <Card x-chunk="dashboard-01-chunk-3" className="hover:border-primary hover:bg-muted/40 ">
+            <Card x-chunk="dashboard-01-chunk-3" className="hover:border-primary hover:bg-muted/40">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">HR</CardTitle>
                 <UserRoundSearch className="h-4 w-4 text-muted-foreground" />
@@ -104,55 +95,44 @@ export function AdminDashboard() {
               </CardContent>
             </Card>
           </Link>
-          {/* Other Card components with similar structure */}
+          
           <Link href="#">
-          <Card x-chunk="dashboard-01-chunk-1" className="hover:border-primary hover:bg-muted/40 ">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-               Orders
-              </CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">+2350</div>
-              {/* <p className="text-xs text-muted-foreground">
-                +180.1% from last month
-              </p> */}
-            </CardContent>
-          </Card>
+            <Card x-chunk="dashboard-01-chunk-1" className="hover:border-primary hover:bg-muted/40">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Orders</CardTitle>
+                <Users className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">+2350</div>
+              </CardContent>
+            </Card>
           </Link>
+          
           <Link href="/admin/plans">
-          <Card x-chunk="dashboard-01-chunk-2" className="hover:border-primary hover:bg-muted/40 ">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Plans</CardTitle>
-              <CreditCard className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{plans.length}</div>
-              {/* <p className="text-xs text-muted-foreground">
-                +19% from last month
-              </p> */}
-            </CardContent>
-          </Card>
+            <Card x-chunk="dashboard-01-chunk-2" className="hover:border-primary hover:bg-muted/40">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Plans</CardTitle>
+                <CreditCard className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{plans.length}</div>
+              </CardContent>
+            </Card>
           </Link>
-         
+          
           <Link href="#">
-          <Card x-chunk="dashboard-01-chunk-0" className="hover:border-primary hover:bg-muted/40 ">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-               Items
-              </CardTitle>
-              <ListTodo className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{items.length}</div>
-              {/* <p className="text-xs text-muted-foreground">
-                +20.1% from last month
-              </p> */}
-            </CardContent>
-          </Card>
+            <Card x-chunk="dashboard-01-chunk-0" className="hover:border-primary hover:bg-muted/40">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Items</CardTitle>
+                <ListTodo className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{items.length}</div>
+              </CardContent>
+            </Card>
           </Link>
         </div>
+
         <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-3">
           <Card className="xl:col-span-2" x-chunk="dashboard-01-chunk-4">
             <CardHeader className="flex flex-row items-center">
@@ -170,17 +150,11 @@ export function AdminDashboard() {
             <CardContent>
               <Table>
                 <TableHeader>
-                 <TableRow>
+                  <TableRow>
                     <TableHead>Customer</TableHead>
-                    <TableHead className="hidden xl:table-column">
-                      Type
-                    </TableHead>
-                    <TableHead className="hidden xl:table-column">
-                      Status
-                    </TableHead>
-                    <TableHead className="hidden xl:table-column">
-                      Date
-                    </TableHead>
+                    <TableHead className="hidden xl:table-column">Type</TableHead>
+                    <TableHead className="hidden xl:table-column">Status</TableHead>
+                    <TableHead className="hidden xl:table-column">Date</TableHead>
                     <TableHead className="text-right">Company name</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -193,26 +167,19 @@ export function AdminDashboard() {
                           {hr.email}
                         </div>
                       </TableCell>
+                      <TableCell className="hidden xl:table-column">Sale</TableCell>
                       <TableCell className="hidden xl:table-column">
-                      Sale
-                    </TableCell>
-                    <TableCell className="hidden xl:table-column">
-                      <Badge className="text-xs" variant="outline">
-                        Approved
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell lg:hidden xl:table-column">
-                      2023-06-23
-                    </TableCell>
-                    <TableCell className="text-right">{hr.company}</TableCell>
-                  </TableRow>
-                      {/* Other TableCell components */}
+                        <Badge className="text-xs" variant="outline">Approved</Badge>
+                      </TableCell>
+                      <TableCell className="hidden md:table-cell lg:hidden xl:table-column">2023-06-23</TableCell>
+                      <TableCell className="text-right">{hr.company}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
             </CardContent>
           </Card>
+
           <Card x-chunk="dashboard-01-chunk-5">
             <CardHeader>
               <CardTitle>Recent plans</CardTitle>
