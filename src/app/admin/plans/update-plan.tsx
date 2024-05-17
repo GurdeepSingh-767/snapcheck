@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -28,7 +28,13 @@ interface UpdatePlanSheetProps {
     plan: any; 
   }
 
-
+  const fetchData = async (endpoint: string) => {
+    const response = await fetch(endpoint);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch ${endpoint}`);
+    }
+    return response.json();
+  };
 
 
 const OPTIONS: Option[] = [
@@ -40,17 +46,84 @@ const OPTIONS: Option[] = [
 ];
 
 export function UpdatePlanSheet({ open, onOpenChange, plan }: UpdatePlanSheetProps) {
-    const form = useForm<z.infer<typeof planSchema>>({
+    
+      const [options, setOptions] = useState<Option[]>([]);
+      const [plans, setPlans] = useState([]);
+      const [products, setProducts] = useState([]);
+      const [loading, setLoading] = useState(true);
+      const [error, setError] = useState<string | null>(null);
+      const form = useForm<z.infer<typeof planSchema>>({
         resolver: zodResolver(planSchema),
         defaultValues: {
-          plan: "",
-          price: 0,
+          plan: plan.planName,
+          price: plan.planPrice,
+          items:[]
         },
       });
-    
+
+      useEffect(() => {
+
+        
+        const fetchPlansAndProducts = async () => {
+          try {
+            const productsData = await fetchData('/api/item');
+            const productOptions = productsData.data.map((product: { productName: string, _id: string }) => ({
+              label: product.productName,
+              value: product._id,
+            }));
+            setOptions(productOptions);
+
+            // Set the form default values including the selected items
+            form.setValue('items', plan.products.map((productId: string) => ({
+                label: productOptions.find((option: { value: string; }) => option.value === productId)?.label || '',
+                value: productId,
+            })));
+
+            setLoading(false);
+          } catch (err) {
+            console.error('Error fetching data:', err);
+            setError('Failed to fetch data');
+            setLoading(false);
+          }
+        };
+
+        fetchPlansAndProducts();
+    }, [plan, form]);
+
       function onSubmit(values: z.infer<typeof planSchema>) {
-        console.log(values);
-      }
+        try {
+          const productIds = values.items.map(item => item.value);
+            const updatedPlanData = {
+                ...plan,
+                id:plan._id,
+                planName: values.plan,
+                planPrice: values.price,
+                products: productIds
+            };
+
+            fetch(`/api/plan`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(updatedPlanData),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Plan updated:', data);
+                // You can add logic to handle success response, e.g., close the modal
+                onOpenChange(false);
+            })
+            .catch(error => {
+                console.error('Error updating plan:', error);
+                // You can add logic to handle error response
+            });
+        } catch (error) {
+            console.error('Error updating plan:', error);
+        }
+    }
+      if (loading) return <div>Loading...</div>;
+    if (error) return <div>{error}</div>;
   
   return (
    
@@ -92,7 +165,7 @@ export function UpdatePlanSheet({ open, onOpenChange, plan }: UpdatePlanSheetPro
                 <MultipleSelector
                   value={field.value}
                   onChange={field.onChange}
-                  defaultOptions={OPTIONS}
+                  defaultOptions={options}
                   placeholder="Select a item"
                   emptyIndicator={
                     <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">

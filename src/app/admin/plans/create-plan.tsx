@@ -15,14 +15,16 @@ import {
 import { Input } from "@/components/ui/input"
 import { planSchema } from "@/schemas/planSchema"
 import MultipleSelector, { Option } from '@/components/ui/multiple-selector';
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from 'react';
 
-const OPTIONS: Option[] = [
-    { label: 'Item 1', value: 'item1' },
-    { label: 'Item 2', value: 'item2' },
-    { label: 'Item 5', value: 'item5', disable: true },
-    { label: 'Item 6', value: 'item6', disable: true },
+// const OPTIONS: Option[] = [
+//     { label: 'Item 1', value: 'item1' },
+//     { label: 'Item 2', value: 'item2' },
+//     { label: 'Item 5', value: 'item5', disable: true },
+//     { label: 'Item 6', value: 'item6', disable: true },
    
-  ];
+//   ];
 
 export function CreatePlan() {
     const form = useForm<z.infer<typeof planSchema>>({
@@ -32,10 +34,64 @@ export function CreatePlan() {
           price: 0,
         },
       });
-    
-      function onSubmit(values: z.infer<typeof planSchema>) {
+      const router = useRouter();
+      const [options, setOptions] = useState<Option[]>([]);
+      const [loading, setLoading] = useState(true);
+      const [error, setError] = useState<string | null>(null);
+      useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const response = await fetch('/api/item'); // Adjust the endpoint as necessary
+                if (!response.ok) {
+                    throw new Error('Failed to fetch products');
+                }
+                const data = await response.json();
+                const productOptions = data.data.map((product: { productName: string, _id: string }) => ({
+                    label: product.productName,
+                    value: product._id,
+                }));
+                setOptions(productOptions);
+                setLoading(false);
+            } catch (err) {
+                setError('Failed to load products');
+                setLoading(false);
+            }
+        };
+
+        fetchProducts();
+    }, []);
+
+      async function onSubmit(values: z.infer<typeof planSchema>) {
+        
         console.log(values);
+        try {
+          const productIds = values.items.map(item => item.value);
+          const response = await fetch('/api/plan', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                  planName: values.plan,
+                  planPrice: values.price,
+                  products: productIds,
+              }),
+          });
+
+          const data = await response.json();
+          if (!response.ok) {
+              throw new Error(data.message || 'Failed to create plan');
+          }
+
+          console.log('Plan created:', data);
+          router.push('/admin/dashboard');
+      } catch (error) {
+          console.error('Error creating plan:', error);
       }
+      }
+
+      if (loading) return <div>Loading...</div>;
+    if (error) return <div>{error}</div>;
     
 
   return (
@@ -69,7 +125,7 @@ export function CreatePlan() {
                 <MultipleSelector
                   value={field.value}
                   onChange={field.onChange}
-                  defaultOptions={OPTIONS}
+                  defaultOptions={options}
                   placeholder="Select a item"
                   emptyIndicator={
                     <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">

@@ -38,9 +38,11 @@ export async function POST(request: NextRequest) {
 
         const tokenData = {
             id: user._id,
-            name : user.name,
+            first_name : user.first_name,
+            last_name : user.last_name,
             email: user.email,
         }
+        
 
         const token = await jwt.sign({tokenData:tokenData}, process.env.TOKEN_SECRET!,{ expiresIn : '1d'});
 
@@ -50,7 +52,7 @@ export async function POST(request: NextRequest) {
             message: "Login successful",
             user: {
                 id: user._id,
-                name: user.name,
+                first_name: user.first_name,
                 email: user.email,
             },
         }, {

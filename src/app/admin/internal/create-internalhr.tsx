@@ -36,6 +36,7 @@ import {
     SelectValue,
   } from "@/components/ui/select";
 import { internalFormSchema } from "@/schemas/internalFormSchema";
+import { useEffect, useState } from "react";
 
 
   const OPTIONS: Option[] = [
@@ -53,6 +54,9 @@ import { internalFormSchema } from "@/schemas/internalFormSchema";
 export function  CreateInternalForm() {
 
   const router = useRouter();
+  const [options, setOptions] = useState<Option[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const form = useForm<z.infer<typeof internalFormSchema>>({
     resolver: zodResolver(internalFormSchema),
@@ -62,12 +66,62 @@ export function  CreateInternalForm() {
       companyName: "",
     },
   });
+  useEffect(() => {
+    const fetchPlans = async () => {
+        try {
+            const response = await fetch('/api/plan'); // Adjust the endpoint as necessary
+            if (!response.ok) {
+                throw new Error('Failed to fetch plans');
+            }
+            const data = await response.json();
+            const planOptions = data.data.map((plan: { planName: string, _id: string }) => ({
+                label: plan.planName,
+                value: plan._id,
+            }));
+            setOptions(planOptions);
+            setLoading(false);
+        } catch (err) {
+            setError('Failed to load products');
+            setLoading(false);
+        }
+    };
+
+    fetchPlans();
+}, []);
 
   const handleSubmit = async (values: z.infer<typeof internalFormSchema>) => {
     console.log({ values });
+    try {
+      const planIds = values.planAccess.map(item => item.value);
+      const response = await fetch('/api/hr', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: values.fullName,
+            email: values.email,
+            role: values.role,
+            company: values.companyName,
+            password: "TestPassword",
+            plan:planIds,
+            report_access:values.reportAccess
+          }),
+      });
+
+      const data = await response.json();
+      
+      if (!response.ok) {
+          throw new Error(data.message || 'Failed to creating HR');
+      }
+      router.push('/admin/dashboard');
+  } catch (error) {
+      console.error('Error creating HR:', error);
+  }
   };
 
-
+  if (loading) return <div>Loading...</div>;
+    if (error) return <div>{error}</div>;
   return (
 <> 
  <Dialog>
@@ -134,6 +188,28 @@ export function  CreateInternalForm() {
         />
         <FormField
           control={form.control}
+          name="role"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Role</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select the role" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="internal">Internal</SelectItem>
+                  <SelectItem value="external">External</SelectItem>
+                
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
           name="companyName"
           render={({ field }) => {
             return (
@@ -166,7 +242,7 @@ export function  CreateInternalForm() {
                 <MultipleSelector
                   value={field.value}
                   onChange={field.onChange}
-                  defaultOptions={OPTIONS}
+                  defaultOptions={options}
                   placeholder="Select a plan"
                   emptyIndicator={
                     <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
@@ -186,16 +262,16 @@ export function  CreateInternalForm() {
           name="reportAccess"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Select license type</FormLabel>
+              <FormLabel>Report Access</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select a license type" />
+                    <SelectValue placeholder="Report Access" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="yes">Yes</SelectItem>
-                  <SelectItem value="no">No</SelectItem>
+                  <SelectItem value="true">Yes</SelectItem>
+                  <SelectItem value="false">No</SelectItem>
                 
                 </SelectContent>
               </Select>

@@ -9,76 +9,75 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { CreateInternalForm } from "./create-internalhr";
 import { UpdateInternalHrSheet } from "./update-internalhr";
+import { useEffect, useState } from "react";
 
-interface Order {
-  name: string;
-  email: string;
-  companyName: string;
-  created: string;
-}
 
-// Sample JSON data conforming to the Order interface
-const sampleData: Order[] = [
-  {
-    name: "Laser Lemonade Machine",
-    email: "guru@gamil.com",
-    companyName: "Comapny 1",
-    created: "2023-07-12 10:42 AM",
-  },
-  {
-    name: "Laser Lemonade Machine",
-    email: "guru@gamil.com",
-    companyName: "Comapny 1",
-    created: "2023-07-12 10:42 AM",
-  },
-  {
-    name: "Laser Lemonade Machine",
-    email: "guru@gamil.com",
-    companyName: "Comapny 1",
-    created: "2023-07-12 10:42 AM",
-  },
-  {
-    name: "Laser Lemonade Machine",
-    email: "guru@gamil.com",
-    companyName: "Comapny 1",
-    created: "2023-07-12 10:42 AM",
-  },
-  {
-    name: "Laser Lemonade Machine",
-    email: "guru@gamil.com",
-    companyName: "Comapny 1",
-    created: "2023-07-12 10:42 AM",
-  },
-  {
-    name: "Laser Lemonade Machine",
-    email: "guru@gamil.com",
-    companyName: "Comapny 1",
-    created: "2023-07-12 10:42 AM",
-  },
-  {
-    name: "Laser Lemonade Machine",
-    email: "guru@gamil.com",
-    companyName: "Comapny 1",
-    created: "2023-07-12 10:42 AM",
-  },
-];
+const fetchData = async (endpoint: string) => {
+  const response = await fetch(endpoint);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch ${endpoint}`);
+  }
+  return response.json();
+};
 
 export default function InternalTable() {
   const router = useRouter();
+  const [HRs, setHRs] = useState([]);
   const [currentPage, setCurrentPage] = React.useState(1);
   const itemsPerPage = 8;
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = currentPage * itemsPerPage;
-  const [isUpdateOpen, setIsUpdateOpen] = React.useState(false);
-  const [selectedOrder, setSelectedOrder] = React.useState<Order | null>(null);
+  const [isUpdateOpen, setIsUpdateOpen] = useState(false);
+  const [selectedHR, setSelectedHR] = useState(null);
+
+  useEffect(() => {
+    const fetchPlansAndProducts = async () => {
+      try {
+        const hrsData = await fetchData('/api/hr');
+        // const productsData = await fetchData('/api/item');
+        // setPlans(plansData.data);
+        setHRs(hrsData.data);
+      } catch (err) {
+        console.error('Error fetching data:', err);
+      }
+    };
+
+    fetchPlansAndProducts();
+  }, []);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
 
-  const handleEditClick = (order: Order) => {
-    setSelectedOrder(order);
+  const handleEditClick = (hr:any) => {
+    setSelectedHR(hr);
+    console.log("selected hr from table: ",selectedHR);
+    
     setIsUpdateOpen(true);
+  };
+
+  const handleDeleteClick = async (hrId: string) => {
+    if (confirm('Are you sure you want to delete this HR?')) {
+      try {
+        const id ={id:hrId};
+        const response = await fetch(`/api/hr/`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(id),
+        });
+        if (response.ok) {
+          setHRs(HRs.filter((hr:{_id:string}) => hr._id !== hrId));
+          alert('HR deleted successfully');
+        } else {
+          alert('Failed to delete HR');
+        }
+      } catch (error) {
+        console.error('Error deleting HR:', error);
+        alert('Failed to delete HR');
+      }
+    }
   };
 
   return (
@@ -110,12 +109,12 @@ export default function InternalTable() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {sampleData.slice(startIndex, endIndex).map((order, index) => (
+                  {HRs.slice(startIndex, endIndex).map((order:any, index) => (
                     <TableRow key={index}>
                       <TableCell className="font-medium">{order.name}</TableCell>
                       <TableCell className="font-medium hidden lg:table-cell">{order.email}</TableCell>
-                      <TableCell className="hidden lg:table-cell">{order.companyName}</TableCell>
-                      <TableCell className="hidden lg:table-cell">{order.created}</TableCell>
+                      <TableCell className="hidden lg:table-cell">{order.company}</TableCell>
+                      <TableCell className="hidden lg:table-cell">{order.createdAt}</TableCell>
                       <TableCell>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
@@ -126,7 +125,7 @@ export default function InternalTable() {
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
                             <DropdownMenuItem onClick={() => handleEditClick(order)}>Edit</DropdownMenuItem>
-                            <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
+                            <DropdownMenuItem className="text-destructive" onClick={() => handleDeleteClick(order._id)}>Delete</DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </TableCell>
@@ -156,11 +155,11 @@ export default function InternalTable() {
           </Card>
         </TabsContent>
       </Tabs>
-      {selectedOrder && (
+      {selectedHR && (
         <UpdateInternalHrSheet
           open={isUpdateOpen}
-          onOpenChange={(open) => setIsUpdateOpen(open)}
-          plan={selectedOrder}
+          onOpenChange={setIsUpdateOpen}
+          hr={selectedHR}
         />
       )}
     </main>

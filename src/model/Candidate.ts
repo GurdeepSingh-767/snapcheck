@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 // Define the schema for the Candidate model
-export interface CandidateModel extends Document {
+export interface Candidate extends Document {
     internalHr: mongoose.Schema.Types.ObjectId;
     companyName: string;
     plans: string;
@@ -13,7 +13,7 @@ export interface CandidateModel extends Document {
     status: string; 
 }
 
-const CandidateSchema: Schema<CandidateModel> = new Schema({
+const CandidateSchema: Schema<Candidate> = new Schema({
     internalHr: { type: mongoose.Schema.Types.ObjectId, ref: 'Hr' },
     companyName: { type: String, required: true },
     plans: { type: String, required: true },
@@ -28,8 +28,11 @@ const CandidateSchema: Schema<CandidateModel> = new Schema({
     contactNumber: { type: String, required: true },
     ssnId: { type: String, required: true },
     status: { type: String, default: "created" } 
+},
+{
+    timestamps:true
 });
 
 // Create and export the Candidate model
-const CandidateModel =(mongoose.models.Candidate as mongoose.Model<CandidateModel>)|| mongoose.model<CandidateModel>("Candidate", CandidateSchema);
+const CandidateModel =(mongoose.models.Candidate as mongoose.Model<Candidate>)|| mongoose.model<Candidate>("Candidate", CandidateSchema);
 export default CandidateModel;

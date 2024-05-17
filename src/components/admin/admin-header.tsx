@@ -26,46 +26,24 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { useRouter } from "next/navigation";
 
 export default function AdminHeader() {  
-  // const router = useRouter();
-  // const [data, setData] = React.useState("nothing");
+  const router = useRouter();
+  const [data, setData] = React.useState("nothing");
 
-  // const handleLogout = async () => {
-  //   try {
-  //     const response = await fetch("/api/users/sign-out", {
-  //       method: "GET",
-  //     });
-  //     if (response.ok) {
-  //       console.log("Logged out successfully");
-  //       router.push("/login");
-  //     } else {
-  //       console.error("Logout failed");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error logging out:", error);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   const getDetails = async () => {
-  //     try {
-  //       const res = await fetch("/api/users/hr", {
-  //         method: "GET",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //       });
-  //       if (res.ok) {
-  //         const data = await res.json();
-  //         console.log("HR details:", data.data);
-  //       } else {
-  //         console.error("Failed to fetch HR details:", res.statusText);
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching HR details:", error);
-  //     }
-  //   };
-  //   getDetails();
-  // }, []);
+  const handleLogout = async () => {
+    try {
+      const response = await fetch("/api/hr/sign-out", {
+        method: "GET",
+      });
+      if (response.ok) {
+        console.log("Logged out successfully");
+        router.push("/login");
+      } else {
+        console.error("Logout failed");
+      }
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
+  };
 
   // Define array of links
   const links = [
@@ -116,7 +94,7 @@ export default function AdminHeader() {
           <DropdownMenuItem>Settings</DropdownMenuItem>
           <DropdownMenuItem>Support</DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem >Logout</DropdownMenuItem>
+          <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </header>

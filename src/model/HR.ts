@@ -7,6 +7,8 @@ export interface Hr extends Document {
     role:string;
     company:string;
     password: string;
+    plan: mongoose.Schema.Types.ObjectId[]; // Foreign key to Plan
+    report_access: boolean;
 }
 
 const HrSchema: Schema<Hr> = new Schema({
@@ -19,11 +21,15 @@ const HrSchema: Schema<Hr> = new Schema({
     },
     role: { type: String, required: [true,"role is required"] },
     company: { type: String, required: [true,"Company name is required"] },
-    password: { type: String, required: [true,"Password is required"] }
+    password: { type: String, required: [true,"Password is required"] },
+    plan: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Plan', required: true }], // Foreign key to Plan
+    report_access: { type: Boolean, required: true, default: false }
 },
 {
     timestamps:true
 });
+
+
 
 
 

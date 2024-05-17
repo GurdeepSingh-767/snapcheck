@@ -30,8 +30,63 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { useEffect, useState } from "react"
 
 export function AdminDashboard() {
+  const [plans, setPlans] = useState([]);
+  const [items, setItems] = useState([]);
+  const [HRs, setHRs] = useState([]);
+  const [recentHR,setRecentHR]= useState([])
+
+
+  useEffect(() => {
+    const fetchPlans = async () => {
+      try {
+        const response = await fetch('/api/plan');
+        if (!response.ok) {
+          throw new Error('Failed to fetch plans');
+        }
+        const data = await response.json();
+
+        setPlans(data.data); 
+      } catch (error) {
+        console.error('Error fetching plans:', error);
+      }
+    };
+    const fetchItems = async () => {
+      try {
+        const response = await fetch('/api/item');
+        if (!response.ok) {
+          throw new Error('Failed to fetch items');
+        }
+        const data = await response.json();
+
+        setItems(data.data); 
+      } catch (error) {
+        console.error('Error fetching items:', error);
+      }
+    };
+    const fetchHRs = async () => {
+      try {
+        const response = await fetch('/api/hr');
+        if (!response.ok) {
+          throw new Error('Failed to fetch HRs');
+        }
+        const data = await response.json();
+
+
+        setHRs(data.data);
+        const lastIndex = data.data.length - 1; // Get the index of the last element
+        const startIndex = Math.max(0, lastIndex - 4);
+        setRecentHR(data.data.slice(startIndex, lastIndex + 1).reverse()) 
+      } catch (error) {
+        console.error('Error fetching HRs:', error);
+      }
+    };
+    fetchPlans();
+    fetchItems();
+    fetchHRs();
+  }, []);
   return (
     <div className="flex min-h-screen w-full flex-col">
       <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
@@ -43,7 +98,7 @@ export function AdminDashboard() {
               <UserRoundSearch className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">+573</div>
+              <div className="text-2xl font-bold">{HRs.length}</div>
               {/* <p className="text-xs text-muted-foreground">
                 +201 since last hour
               </p> */}
@@ -73,7 +128,7 @@ export function AdminDashboard() {
               <CreditCard className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">+12</div>
+              <div className="text-2xl font-bold">{plans.length}</div>
               {/* <p className="text-xs text-muted-foreground">
                 +19% from last month
               </p> */}
@@ -90,7 +145,7 @@ export function AdminDashboard() {
               <ListTodo className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">7</div>
+              <div className="text-2xl font-bold">{items.length}</div>
               {/* <p className="text-xs text-muted-foreground">
                 +20.1% from last month
               </p> */}
@@ -134,11 +189,12 @@ export function AdminDashboard() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
+                {recentHR.map((hr:any) => (
                   <TableRow>
                     <TableCell>
-                      <div className="font-medium">Liam Johnson</div>
+                      <div className="font-medium">{hr.name}</div>
                       <div className="hidden text-sm text-muted-foreground md:inline">
-                        liam@example.com
+                        {hr.email}
                       </div>
                     </TableCell>
                     <TableCell className="hidden xl:table-column">
@@ -152,88 +208,10 @@ export function AdminDashboard() {
                     <TableCell className="hidden md:table-cell lg:hidden xl:table-column">
                       2023-06-23
                     </TableCell>
-                    <TableCell className="text-right">XYZ</TableCell>
+                    <TableCell className="text-right">{hr.company}</TableCell>
                   </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <div className="font-medium">Olivia Smith</div>
-                      <div className="hidden text-sm text-muted-foreground md:inline">
-                        olivia@example.com
-                      </div>
-                    </TableCell>
-                    <TableCell className="hidden xl:table-column">
-                      Refund
-                    </TableCell>
-                    <TableCell className="hidden xl:table-column">
-                      <Badge className="text-xs" variant="outline">
-                        Declined
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell lg:hidden xl:table-column">
-                      2023-06-24
-                    </TableCell>
-                    <TableCell className="text-right">XYZ</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <div className="font-medium">Noah Williams</div>
-                      <div className="hidden text-sm text-muted-foreground md:inline">
-                        noah@example.com
-                      </div>
-                    </TableCell>
-                    <TableCell className="hidden xl:table-column">
-                      Subscription
-                    </TableCell>
-                    <TableCell className="hidden xl:table-column">
-                      <Badge className="text-xs" variant="outline">
-                        Approved
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell lg:hidden xl:table-column">
-                      2023-06-25
-                    </TableCell>
-                    <TableCell className="text-right">XYZ</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <div className="font-medium">Emma Brown</div>
-                      <div className="hidden text-sm text-muted-foreground md:inline">
-                        emma@example.com
-                      </div>
-                    </TableCell>
-                    <TableCell className="hidden xl:table-column">
-                      Sale
-                    </TableCell>
-                    <TableCell className="hidden xl:table-column">
-                      <Badge className="text-xs" variant="outline">
-                        Approved
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell lg:hidden xl:table-column">
-                      2023-06-26
-                    </TableCell>
-                    <TableCell className="text-right">XYZ</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <div className="font-medium">Liam Johnson</div>
-                      <div className="hidden text-sm text-muted-foreground md:inline">
-                        liam@example.com
-                      </div>
-                    </TableCell>
-                    <TableCell className="hidden xl:table-column">
-                      Sale
-                    </TableCell>
-                    <TableCell className="hidden xl:table-column">
-                      <Badge className="text-xs" variant="outline">
-                        Approved
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell lg:hidden xl:table-column">
-                      2023-06-27
-                    </TableCell>
-                    <TableCell className="text-right">XYZ</TableCell>
-                  </TableRow>
+                  ))}
+                  
                 </TableBody>
               </Table>
             </CardContent>
@@ -243,62 +221,16 @@ export function AdminDashboard() {
               <CardTitle>Recent plans</CardTitle>
             </CardHeader>
             <CardContent className="grid gap-8">
-              <div className="flex items-center gap-4">
-                <div className="grid gap-1">
-                  <p className="text-sm font-medium leading-none">
-                  Plan 1
-                  </p>
+            {plans.map((plan:{_id:string,planName:string,planPrice:number}) => (
+                <div key={plan._id} className="flex items-center gap-4">
+                  <div className="grid gap-1">
+                    <p className="text-sm font-medium leading-none">
+                      {plan.planName}
+                    </p>
+                  </div>
+                  <div className="ml-auto font-medium">+${plan.planPrice}</div>
                 </div>
-                <div className="ml-auto font-medium">+$1,999.00</div>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="grid gap-1">
-                  <p className="text-sm font-medium leading-none">
-                  Plan 1
-                  </p>
-                </div>
-                <div className="ml-auto font-medium">+$1,999.00</div>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="grid gap-1">
-                  <p className="text-sm font-medium leading-none">
-                  Plan 1
-                  </p>
-                </div>
-                <div className="ml-auto font-medium">+$1,999.00</div>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="grid gap-1">
-                  <p className="text-sm font-medium leading-none">
-                  Plan 1
-                  </p>
-                </div>
-                <div className="ml-auto font-medium">+$1,999.00</div>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="grid gap-1">
-                  <p className="text-sm font-medium leading-none">
-                  Plan 1
-                  </p>
-                </div>
-                <div className="ml-auto font-medium">+$1,999.00</div>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="grid gap-1">
-                  <p className="text-sm font-medium leading-none">
-                  Plan 1
-                  </p>
-                </div>
-                <div className="ml-auto font-medium">+$1,999.00</div>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="grid gap-1">
-                  <p className="text-sm font-medium leading-none">
-                  Plan 1
-                  </p>
-                </div>
-                <div className="ml-auto font-medium">+$1,999.00</div>
-              </div>
+              ))}
            
 
               

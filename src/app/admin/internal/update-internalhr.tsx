@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -26,9 +26,17 @@ import { CheckIcon } from "lucide-react";
 interface UpdateInternalHrSheetProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    plan: any; 
+    hr: any; 
   }
 
+
+  const fetchData = async (endpoint: string) => {
+    const response = await fetch(endpoint);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch ${endpoint}`);
+    }
+    return response.json();
+  };
 
 
 
@@ -40,22 +48,91 @@ const OPTIONS: Option[] = [
  
 ];
 
-export function UpdateInternalHrSheet({ open, onOpenChange, plan }: UpdateInternalHrSheetProps) {
+export function UpdateInternalHrSheet({ open, onOpenChange, hr }: UpdateInternalHrSheetProps) {
 
 
   const form = useForm<z.infer<typeof internalFormSchema>>({
     resolver: zodResolver(internalFormSchema),
     defaultValues: {
-      fullName: "",
-      email: "",
-      companyName: "",
+      fullName: hr.name,
+      email: hr.email,
+      companyName: hr.company,
+      role:hr.role,
+      planAccess:[],
+      reportAccess: hr.report_access.toString(),
     },
   });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [options, setOptions] = useState<Option[]>([]);
+
+  useEffect(() => {
+
+    console.log("Selected hr:",form);
+    const fetchPlansAndProducts = async () => {
+      try {
+        const plansData = await fetchData('/api/plan');
+        const planOptions = plansData.data.map((plan: { planName: string, _id: string }) => ({
+          label: plan.planName,
+          value: plan._id,
+        }));
+        setOptions(planOptions);
+
+        // Set the form default values including the selected items
+        form.setValue('planAccess', hr.plan.map((planId: string) => ({
+            label: planOptions.find((option: { value: string; }) => option.value === planId)?.label || '',
+            value: planId,
+        })));
+
+        setLoading(false);
+      } catch (err) {
+        console.error('Error fetching data:', err);
+        setError('Failed to fetch data');
+        setLoading(false);
+      }
+    };
+
+    fetchPlansAndProducts();
+}, [hr, form]);
 
   const handleSubmit = async (values: z.infer<typeof internalFormSchema>) => {
-    console.log({ values });
+    try {
+      const planIds = values.planAccess.map(item => item.value);
+        const updatedHRData = {
+            ...hr,
+            id:hr._id,
+            name: values.fullName,
+            email: values.email,
+            role: values.role,
+            company: values.companyName,
+            plan:planIds,
+            report_access:values.reportAccess
+        };
+
+        fetch(`/api/hr`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updatedHRData),
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('HR updated:', data);
+            // You can add logic to handle success response, e.g., close the modal
+            onOpenChange(false);
+        })
+        .catch(error => {
+            console.error('Error updating HR:', error);
+            // You can add logic to handle error response
+        });
+    } catch (error) {
+        console.error('Error updating HR:', error);
+    }
   };
   
+  if (loading) return <div>Loading...</div>;
+    if (error) return <div>{error}</div>;
   return (
    
     <Sheet onOpenChange={onOpenChange} open={open}>
@@ -113,6 +190,29 @@ export function UpdateInternalHrSheet({ open, onOpenChange, plan }: UpdateIntern
             );
           }}
         />
+
+<FormField
+          control={form.control}
+          name="role"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Role</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select the role" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="internal">Internal</SelectItem>
+                  <SelectItem value="external">External</SelectItem>
+                
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <FormField
           control={form.control}
           name="companyName"
@@ -147,7 +247,7 @@ export function UpdateInternalHrSheet({ open, onOpenChange, plan }: UpdateIntern
                 <MultipleSelector
                   value={field.value}
                   onChange={field.onChange}
-                  defaultOptions={OPTIONS}
+                  defaultOptions={options}
                   placeholder="Select a plan"
                   emptyIndicator={
                     <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
@@ -167,16 +267,16 @@ export function UpdateInternalHrSheet({ open, onOpenChange, plan }: UpdateIntern
           name="reportAccess"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Select license type</FormLabel>
+              <FormLabel>Select report access</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select a license type" />
+                    <SelectValue placeholder="Select report access" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="yes">Yes</SelectItem>
-                  <SelectItem value="no">No</SelectItem>
+                  <SelectItem value="true">Yes</SelectItem>
+                  <SelectItem value="false">No</SelectItem>
                 
                 </SelectContent>
               </Select>

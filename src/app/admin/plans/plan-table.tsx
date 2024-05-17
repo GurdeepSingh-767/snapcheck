@@ -1,6 +1,4 @@
-"use client";
-
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { 
@@ -48,157 +46,145 @@ import PaginationPrevious from "./paginationPrevious";
 import { CreatePlan } from "./create-plan";
 import { UpdatePlanSheet } from "./update-plan";
 
+// Function to fetch data from API
+const fetchData = async (endpoint: string) => {
+  const response = await fetch(endpoint);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch ${endpoint}`);
+  }
+  return response.json();
+};
 
-// Sample data
-// Sample data
-const sampleData = [
-    {
-      id: 1,
-      name: "Plan 1",
-      items: "item 2",
-      created: "2023-05-12",
-    },
-    {
-      id: 2,
-      name: "Plan 2",
-      items: "item 1 , item 2 item",
-      created: "2023-05-11",
-    },
-    {
-      id: 3,
-      name: "Plan 3",
-      items: "item 1 , item 2 item 3",
-      created: "2023-05-10",
-    },
-    {
-      id: 4,
-      name: "Plan 4",
-      items: "item 1 , item 2 item 3",
-      created: "2023-05-10",
-    },
-    {
-      id: 5,
-      name: "Plan 5",
-      items: "item 1 , item 2 item 3",
-      created: "2023-05-10",
-    },
-    {
-      id: 6,
-      name: "Plan 6",
-      items: "item 1 , item 2 item 3",
-      created: "2023-05-10",
-    },
-    {
-      id: 7,
-      name: "Plan 7",
-      items: "item 1 , item 2 item 3",
-      created: "2023-05-10",
-    },
-    {
-      id: 8,
-      name: "Plan 8",
-      items: "item 1 , item 2 item 3",
-      created: "2023-05-10",
-    },
-    {
-      id: 9,
-      name: "Plan 9",
-      items: "item 1 , item 2 item 3",
-      created: "2023-05-10",
-    },
-  ];
-  
+export default function PlansTable() {
+  const router = useRouter();
+  const [plans, setPlans] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 7;
 
-
-  export default function PlansTable() {
-    const router = useRouter();
-  
-    const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 7;
-  
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-  
-    const currentData = sampleData.slice(startIndex, endIndex);
-  
-    // Function to handle page change
-    const handlePageChange = (page: number) => {
-      setCurrentPage(page);
+  useEffect(() => {
+    const fetchPlansAndProducts = async () => {
+      try {
+        const plansData = await fetchData('/api/plan');
+        const productsData = await fetchData('/api/item');
+        setPlans(plansData.data);
+        setProducts(productsData.data);
+      } catch (err) {
+        console.error('Error fetching data:', err);
+      }
     };
-  
-    const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+
+    fetchPlansAndProducts();
+  }, [plans]);
+
+  const getProductNames = (productIds: any[]) => {
+    return productIds.map(id => {
+      const product:any = products.find((product:{ _id: string}) => product._id === id);
+      return product ? product.productName : id;
+    }).join(", ");
+  };
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentData = plans.slice(startIndex, endIndex);
+
+  const handlePageChange = (page: React.SetStateAction<number>) => {
+    setCurrentPage(page);
+  };
+
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
     const [selectedPlan, setSelectedPlan] = useState(null);
   
     const handleEditClick = (plan:any) => {
       setSelectedPlan(plan);
       setIsEditDialogOpen(true);
     };
-  
-    return (
-      <main className="grid flex-1  items-start gap-4 p-4 sm:px-6 sm:py-4 md:gap-8">
-        <Tabs defaultValue="all">
-          <div className="flex items-center">
-            <TabsList>
-              <TabsTrigger value="all">All</TabsTrigger>
-              <TabsTrigger value="draft" className="hidden sm:flex">
-                Draft
-              </TabsTrigger>
-            </TabsList>
-            <div className="ml-auto flex items-center gap-2">
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button size="sm" className="h-7 gap-1">
-                    <PlusCircle className="h-3.5 w-3.5" />
-                    <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                      Create plan
-                    </span>
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px]">
-                  <DialogHeader>
-                    <DialogTitle>Create plan</DialogTitle>
-                  </DialogHeader>
-                  <CreatePlan />
-                </DialogContent>
-              </Dialog>
-            </div>
+
+    const handleDeleteClick = async (planId: string) => {
+      if (confirm('Are you sure you want to delete this plan?')) {
+        try {
+          const id ={id:planId};
+          const response = await fetch(`/api/plan/`, {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(id),
+          });
+          if (response.ok) {
+            setPlans(plans.filter((plan:{_id:string}) => plan._id !== planId));
+            alert('Plan deleted successfully');
+          } else {
+            alert('Failed to delete plan');
+          }
+        } catch (error) {
+          console.error('Error deleting plan:', error);
+          alert('Failed to delete plan');
+        }
+      }
+    };
+ 
+  return (
+    <main className="grid flex-1  items-start gap-4 p-4 sm:px-6 sm:py-4 md:gap-8">
+      <Tabs defaultValue="all">
+        <div className="flex items-center">
+          <TabsList>
+            <TabsTrigger value="all">All</TabsTrigger>
+            <TabsTrigger value="draft" className="hidden sm:flex">
+              Draft
+            </TabsTrigger>
+          </TabsList>
+          <div className="ml-auto flex items-center gap-2">
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button size="sm" className="h-7 gap-1">
+                  <PlusCircle className="h-3.5 w-3.5" />
+                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                    Create plan
+                  </span>
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle>Create plan</DialogTitle>
+                </DialogHeader>
+                <CreatePlan />
+              </DialogContent>
+            </Dialog>
           </div>
-          <TabsContent value="all">
-            <Card x-chunk="dashboard-06-chunk-0">
-              <CardHeader>
-                <CardTitle>Plan</CardTitle>
-                <CardDescription>
-                  Manage your plan and view their statistics
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Plan name</TableHead>
-                      <TableHead className="hidden lg:table-cell">
-                        Plan items
-                      </TableHead>
-                      <TableHead className="hidden lg:table-cell">
-                        Created
-                      </TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {currentData.map((plan) => (
-                      <TableRow key={plan.id}>
-                        <TableCell className="font-medium">{plan.name}</TableCell>
-                        <TableCell className="font-medium hidden lg:table-cell">
-                          {plan.items}
-                        </TableCell>
-                        <TableCell className="hidden lg:table-cell">
-                          {plan.created}
-                        </TableCell>
-                        <TableCell>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button
+        </div>
+        <TabsContent value="all">
+          <Card x-chunk="dashboard-06-chunk-0">
+            <CardHeader>
+              <CardTitle>Plan</CardTitle>
+              <CardDescription>
+                Manage your plan and view their statistics
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Plan name</TableHead>
+                    <TableHead className="hidden lg:table-cell">Plan items</TableHead>
+                    <TableHead className="hidden lg:table-cell">Created</TableHead>
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {currentData.map((plan:any) => (
+                    <TableRow key={plan._id}>
+                      <TableCell className="font-medium">{plan.planName}</TableCell>
+                      <TableCell className="font-medium hidden lg:table-cell">
+                        {getProductNames(plan.products)}
+                      </TableCell>
+                      <TableCell className="hidden lg:table-cell">
+                        {new Date(plan.createdAt).toLocaleDateString()} {/* Assuming createdAt is a Date object */}
+                      </TableCell>
+                      <TableCell>
+                           <DropdownMenu>
+                             <DropdownMenuTrigger asChild>
+                               <Button
                                 aria-haspopup="true"
                                 size="icon"
                                 variant="ghost"
@@ -212,47 +198,45 @@ const sampleData = [
                                 Edit
                               </DropdownMenuItem>
                               <Separator />
-                              <DropdownMenuItem className="text-destructive">
+                              <DropdownMenuItem className="text-destructive" onClick={() => handleDeleteClick(plan._id)}>
                                 Delete
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
                         </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-              <CardFooter>
-                <Pagination>
-                  <PaginationContent>
-                    <PaginationItem className="mr-3">
-                      <PaginationPrevious
-                        onClick={() => handlePageChange(currentPage - 1)}
-                        disabled={currentPage === 1}
-                      />
-                    </PaginationItem>
-                    <PaginationItem>
-                      <PaginationLink href="#">{currentPage}</PaginationLink>
-                    </PaginationItem>
-                    <PaginationItem>
-                      <PaginationNext
-                        href="#"
-                        onClick={() => handlePageChange(currentPage + 1)}
-                      />
-                    </PaginationItem>
-                  </PaginationContent>
-                </Pagination>
-              </CardFooter>
-            </Card>
-          </TabsContent>
-        </Tabs>
-  
-        {selectedPlan && (
-         
-              <UpdatePlanSheet open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen} plan={selectedPlan} />
-          
-        )}
-      </main>
-    );
-  }
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+            <CardFooter>
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem className="mr-3">
+                    <PaginationPrevious
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 1}
+                    />
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationLink href="#">{currentPage}</PaginationLink>
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationNext
+                      href="#"
+                      onClick={() => handlePageChange(currentPage + 1)}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </CardFooter>
+          </Card>
+        </TabsContent>
+      </Tabs>
+
+      {isEditDialogOpen && (
+          <UpdatePlanSheet open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen} plan={selectedPlan} />
+      )}
+    </main>
+  );
+}

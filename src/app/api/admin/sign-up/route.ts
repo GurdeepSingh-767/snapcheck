@@ -6,7 +6,7 @@ export async function POST(request: Request){
     await dbConnect()
 
     try {
-       const {name,email,contact_number,password}= await request.json()
+       const {first_name,last_name,email,password}= await request.json()
        const existingUserByEmail= await AdminModel.findOne({
         email
        })
@@ -24,9 +24,9 @@ export async function POST(request: Request){
        }else{
         const hashedPassword= await bcrypt.hash(password,10)
         const newUser=new AdminModel({
-            name: name,
+            first_name,
+            last_name,
             email,
-            contact_number,
             password: hashedPassword,
         })
 
