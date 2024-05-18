@@ -160,7 +160,7 @@ export function AdminDashboard() {
                 </TableHeader>
                 <TableBody>
                   {recentHR.map((hr) => (
-                    <TableRow key={hr.id}>
+                    <TableRow key={hr.id || hr._id}>
                       <TableCell>
                         <div className="font-medium">{hr.name}</div>
                         <div className="hidden text-sm text-muted-foreground md:inline">
