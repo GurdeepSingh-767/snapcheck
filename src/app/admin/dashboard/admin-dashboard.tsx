@@ -26,11 +26,29 @@ import {
 } from "@/components/ui/table"
 import { useEffect, useState } from "react"
 
+interface Plan {
+  _id: string;
+  planName: string;
+  planPrice: number;
+}
+
+interface Item {
+  _id: string;
+}
+
+interface HR {
+  _id: string;
+  id?: string; // Optional id property if both id and _id might be present
+  name: string;
+  email: string;
+  company: string;
+}
+
 export function AdminDashboard() {
-  const [plans, setPlans] = useState([]);
-  const [items, setItems] = useState([]);
-  const [HRs, setHRs] = useState([]);
-  const [recentHR, setRecentHR] = useState([]);
+  const [plans, setPlans] = useState<Plan[]>([]);
+  const [items, setItems] = useState<Item[]>([]);
+  const [HRs, setHRs] = useState<HR[]>([]);
+  const [recentHR, setRecentHR] = useState<HR[]>([]);
 
   useEffect(() => {
     const fetchPlans = async () => {
