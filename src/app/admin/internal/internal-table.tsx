@@ -43,7 +43,7 @@ export default function InternalTable() {
     };
 
     fetchPlansAndProducts();
-  }, []);
+  }, [HRs]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
