@@ -33,7 +33,7 @@ interface UpdateInternalHrSheetProps {
   const fetchData = async (endpoint: string) => {
     const response = await fetch(endpoint);
     if (!response.ok) {
-      throw new Error(`Failed to fetch ${endpoint}`);
+      throw new Error(Failed to fetch ${endpoint});
     }
     return response.json();
   };
@@ -54,12 +54,12 @@ export function UpdateInternalHrSheet({ open, onOpenChange, hr }: UpdateInternal
   const form = useForm<z.infer<typeof internalFormSchema>>({
     resolver: zodResolver(internalFormSchema),
     defaultValues: {
-      fullName: hr.name,
-      email: hr.email,
-      companyName: hr.company,
-      role:hr.role,
+      fullName: "",
+      email: "",
+      companyName: "",
+      role:"",
       planAccess:[],
-      reportAccess: hr.report_access.toString(),
+      reportAccess: "",
     },
   });
   const [loading, setLoading] = useState(true);
@@ -83,7 +83,11 @@ export function UpdateInternalHrSheet({ open, onOpenChange, hr }: UpdateInternal
             label: planOptions.find((option: { value: string; }) => option.value === planId)?.label || '',
             value: planId,
         })));
-
+        form.setValue("fullName", hr.name);
+        form.setValue("email", hr.email);
+        form.setValue("companyName", hr.company);
+        form.setValue("role", hr.role);
+        form.setValue("reportAccess",hr.report_access.toString())
         setLoading(false);
       } catch (err) {
         console.error('Error fetching data:', err);
@@ -109,7 +113,7 @@ export function UpdateInternalHrSheet({ open, onOpenChange, hr }: UpdateInternal
             report_access:values.reportAccess
         };
 
-        fetch(`/api/hr`, {
+        fetch(/api/hr, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
