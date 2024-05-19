@@ -148,6 +148,7 @@ export function ProfileForm() {
                     <FormLabel>Email</FormLabel>
                     <FormControl>
                       <Input
+                        disabled
                         placeholder="Enter your email"
                         type="email"
                         autoCapitalize="none"
