@@ -104,6 +104,12 @@ export default function MainNav() {
               >
                 Login
               </Link>
+              {/* <Link
+                href="/login"
+                className="px-3 py-1  font-semibold duration-300 ease-linear flex justify-center w-full sm:w-auto border border-primary text-primary hover:text-white hover:bg-primary dark:text-white dark:bg-primary rounded-full"
+              >
+                View Dashboard
+              </Link> */}
             </div>
           </motion.div>
           <div className="flex items-center lg:hidden">

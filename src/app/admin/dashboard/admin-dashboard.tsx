@@ -38,7 +38,7 @@ interface Item {
 
 interface HR {
   _id: string;
-  id?: string; // Optional id property if both id and _id might be present
+  id?: string;
   name: string;
   email: string;
   company: string;
@@ -101,11 +101,15 @@ export function AdminDashboard() {
   return (
     <div className="flex min-h-screen w-full flex-col">
       <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
+      <h2 className="ml-2 text-xl lg:text-2xl font-bold tracking-tight ">
+  Hi, Welcome back <span className="shake">👋</span>
+</h2>
+
         <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
           <Link href="/admin/internal">
             <Card x-chunk="dashboard-01-chunk-3" className="hover:border-primary hover:bg-muted/40">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">HR</CardTitle>
+                <CardTitle className="text-sm font-medium">Users</CardTitle>
                 <UserRoundSearch className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
@@ -141,7 +145,7 @@ export function AdminDashboard() {
           <Link href="#">
             <Card x-chunk="dashboard-01-chunk-0" className="hover:border-primary hover:bg-muted/40">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Items</CardTitle>
+                <CardTitle className="text-sm font-medium">BGC</CardTitle>
                 <ListTodo className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
@@ -155,11 +159,11 @@ export function AdminDashboard() {
           <Card className="xl:col-span-2" x-chunk="dashboard-01-chunk-4">
             <CardHeader className="flex flex-row items-center">
               <div className="grid gap-2">
-                <CardTitle>HR</CardTitle>
-                <CardDescription>Recent added HR</CardDescription>
+                <CardTitle>Users</CardTitle>
+                <CardDescription>Recent added users</CardDescription>
               </div>
               <Button asChild size="sm" className="ml-auto gap-1">
-                <Link href="/admin/internal">
+                <Link href="/admin/users">
                   View All
                   <ArrowUpRight className="h-4 w-4" />
                 </Link>

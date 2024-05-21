@@ -79,3 +79,19 @@
 .overflow-x-auto:hover::-webkit-scrollbar-thumb {
   background-color: rgba(0, 0, 0, 0);
 }
+
+
+/* Hand Shake */
+/* styles.css */
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(-10px);
+  }
+}
+
+.shake {
+  animation: shake 0.5s ease-in-out infinite;
+}

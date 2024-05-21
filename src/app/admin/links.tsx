@@ -1,5 +1,5 @@
 import React from 'react';
-import { ListPlus, UserPlus, Settings, LayoutDashboard, FolderKanban } from 'lucide-react';
+import {Building2 , ListPlus, UserPlus, Settings, LayoutDashboard, FolderKanban } from 'lucide-react';
 
 export const sidebarNavItems = [
   {
@@ -8,8 +8,8 @@ export const sidebarNavItems = [
     icon: <LayoutDashboard size={20} />,
   },
   {
-    title: "Internal HR",
-    href: "/admin/internal",
+    title: "Users",
+    href: "/admin/users",
     icon: <UserPlus size={20} />,
   },
   // {
@@ -18,9 +18,14 @@ export const sidebarNavItems = [
   //   icon: <ListPlus size={20} />,
   // },
   {
-    title: "Plan Request",
+    title: "Plan",
     href: "/admin/plans",
     icon: <FolderKanban size={20} />,
+  },
+  {
+    title: "Customers",
+    href: "/admin/customers",
+    icon: <Building2 size={20} />,
   },
   {
     title: "Settings",

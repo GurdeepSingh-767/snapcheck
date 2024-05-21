@@ -1,144 +1,84 @@
-'use client'
-import React, { useEffect, useState } from "react";
+"use client";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
 import {
-    Form,
-    FormControl,
-    FormDescription,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-  } from "@/components/ui/form";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import MultipleSelector, { Option } from '@/components/ui/multiple-selector';
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { planSchema } from "@/schemas/planSchema"
-
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { toast } from "@/components/ui/use-toast";
+import { planSchema } from "@/schemas/planSchema";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import MultipleSelector, { Option } from '@/components/ui/multiple-selector';
 
 interface UpdatePlanSheetProps {
-    open: boolean;
-    onOpenChange: (open: boolean) => void;
-    plan: any; 
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export function UpdatePlanSheet({
+  isOpen,
+  onClose,
+}: UpdatePlanSheetProps) {
+  const form = useForm<z.infer<typeof planSchema>>({
+    resolver: zodResolver(planSchema),
+    defaultValues: {
+     
+      
+    },
+  });
+  const [options, setOptions] = useState<Option[]>([]);
+  function onSubmit(data: z.infer<typeof planSchema>) {
+    toast({
+      title: "You submitted the following values:",
+      description: (
+        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+        </pre>
+      ),
+    });
+    onClose(); // Close the sheet after submission
   }
 
-  const fetchData = async (endpoint: string) => {
-    const response = await fetch(endpoint);
-    if (!response.ok) {
-      throw new Error(`Failed to fetch ${endpoint}`);
-    }
-    return response.json();
-  };
-
-
-const OPTIONS: Option[] = [
-  { label: 'Item 1', value: 'item1' },
-  { label: 'Item 2', value: 'item2' },
-  { label: 'Item 5', value: 'item5', disable: true },
-  { label: 'Item 6', value: 'item6', disable: true },
- 
-];
-
-export function UpdatePlanSheet({ open, onOpenChange, plan }: UpdatePlanSheetProps) {
-    
-      const [options, setOptions] = useState<Option[]>([]);
-      const [plans, setPlans] = useState([]);
-      const [products, setProducts] = useState([]);
-      const [loading, setLoading] = useState(true);
-      const [error, setError] = useState<string | null>(null);
-      const form = useForm<z.infer<typeof planSchema>>({
-        resolver: zodResolver(planSchema),
-        defaultValues: {
-          plan: plan.planName,
-          price: plan.planPrice,
-          items:[]
-        },
-      });
-
-      useEffect(() => {
-
-        
-        const fetchPlansAndProducts = async () => {
-          try {
-            const productsData = await fetchData('/api/item');
-            const productOptions = productsData.data.map((product: { productName: string, _id: string }) => ({
-              label: product.productName,
-              value: product._id,
-            }));
-            setOptions(productOptions);
-
-            // Set the form default values including the selected items
-            form.setValue('items', plan.products.map((productId: string) => ({
-                label: productOptions.find((option: { value: string; }) => option.value === productId)?.label || '',
-                value: productId,
-            })));
-
-            setLoading(false);
-          } catch (err) {
-            console.error('Error fetching data:', err);
-            setError('Failed to fetch data');
-            setLoading(false);
-          }
-        };
-
-        fetchPlansAndProducts();
-    }, [plan, form]);
-
-      function onSubmit(values: z.infer<typeof planSchema>) {
-        try {
-          const productIds = values.items.map(item => item.value);
-            const updatedPlanData = {
-                ...plan,
-                id:plan._id,
-                planName: values.plan,
-                planPrice: values.price,
-                products: productIds
-            };
-
-            fetch(`/api/plan`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(updatedPlanData),
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Plan updated:', data);
-                // You can add logic to handle success response, e.g., close the modal
-                onOpenChange(false);
-            })
-            .catch(error => {
-                console.error('Error updating plan:', error);
-                // You can add logic to handle error response
-            });
-        } catch (error) {
-            console.error('Error updating plan:', error);
-        }
-    }
-      if (loading) return <div>Loading...</div>;
-    if (error) return <div>{error}</div>;
-  
   return (
-   
-    <Sheet onOpenChange={onOpenChange} open={open}>
-      
+    <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent className="flex flex-col gap-6 sm:max-w-md">
         <SheetHeader className="text-left">
           <SheetTitle>Update Plan</SheetTitle>
-          <SheetDescription>Update the plan details and save the changes</SheetDescription>
+          <SheetDescription>
+            Update the Plan details and save the changes
+          </SheetDescription>
         </SheetHeader>
-        <ScrollArea className="h-screen ">
-        <Form {...form}>
-      <form noValidate onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 p-5">
-            
-            <FormField
+        <ScrollArea className="h-screen">
+          <Form {...form}>
+            <form
+              noValidate
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-4 p-5"
+            >
+                     <FormField
               control={form.control}
               name="plan"
               render={({ field }) => (
@@ -154,19 +94,45 @@ export function UpdatePlanSheet({ open, onOpenChange, plan }: UpdatePlanSheetPro
                 </FormItem>
               )}
             />
+
+<FormField
+          control={form.control}
+          name="companyName"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Company </FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select the company name" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="company">Company 1</SelectItem>
+                  <SelectItem value="external">Company 2</SelectItem>
+                
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+
+
             
             <FormField
           control={form.control}
           name="items"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Item</FormLabel>
+              <FormLabel>BGC</FormLabel>
               <FormControl>
                 <MultipleSelector
                   value={field.value}
                   onChange={field.onChange}
                   defaultOptions={options}
-                  placeholder="Select a item"
+                  placeholder="Select a BGC"
                   emptyIndicator={
                     <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
                       no results found.
@@ -178,6 +144,8 @@ export function UpdatePlanSheet({ open, onOpenChange, plan }: UpdatePlanSheetPro
             </FormItem>
           )}
         />
+
+
 
             <FormField
               control={form.control}
@@ -195,13 +163,35 @@ export function UpdatePlanSheet({ open, onOpenChange, plan }: UpdatePlanSheetPro
                 </FormItem>
               )}
             />
-        <Button type="submit">Save changes</Button>
-      </form>
-    </Form>
-          </ScrollArea>
+
+
+<FormField
+          control={form.control}
+          name="status"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Status</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select the status" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="inactive">Inactive</SelectItem>
+                
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+              <Button type="submit">Save changes</Button>
+            </form>
+          </Form>
+        </ScrollArea>
       </SheetContent>
-      
     </Sheet>
-  
   );
 }

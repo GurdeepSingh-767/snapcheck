@@ -7,13 +7,12 @@ export const metadata: Metadata = {
   description: "Snapcheck Admin",
 };
 
-interface ExternalLayoutProps {
+interface CustomersLayoutProps {
   children: React.ReactNode;
 }
 
 
-
-export default function ExternalLayout({ children }: ExternalLayoutProps) {
+export default function CustomersLayout({ children }: CustomersLayoutProps) {
   return (
     <>
       <div className="flex min-h-screen w-full  ">

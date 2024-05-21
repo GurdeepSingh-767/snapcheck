@@ -21,6 +21,7 @@ import { adminprofileSchema } from "@/schemas/admin-profile";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
+import BreadCrumb from "@/components/breadcrumb";
 
 export function ProfileForm() {
   const router = useRouter();
@@ -93,10 +94,16 @@ export function ProfileForm() {
     }
   };
 
+  const breadcrumbItems = [
+    { title: 'Settings', link: '/admin/settings' },
+    // { title: 'Create', link: '/dashboard/user/create' }
+  ];
+
   return (
     <div className="w-full lg:w-3/4 p-3">
-      <Card>
-        <CardTitle className="text-xl border-b px-6 py-4">Profile</CardTitle>
+        <BreadCrumb items={breadcrumbItems} />
+      <Card className="mt-4">
+        <CardTitle className="text-xl  border-b px-6 py-4">Profile</CardTitle>
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-3">

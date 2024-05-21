@@ -1,7 +1,5 @@
 "use client";
-
 import * as React from "react";
-
 import { Separator } from "@/components/ui/separator";
 import AdminHeader from "@/components/admin/admin-header";
 import PlansTable from "./plan-table";

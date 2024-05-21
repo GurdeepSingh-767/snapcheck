@@ -10,7 +10,8 @@ export default function LoginPageAdmin() {
       <div className="relative hidden h-screen flex-col w-3/4   dark:border-r lg:flex">
         <div className="absolute top-20 left-20 right-20 z-10">
             <h1 className="text-white text-4xl font-bold cursor-pointer"><Link href="/">Snapcheck</Link></h1>
-            <p className="text-white font-semibold mt-2 cursor-pointer pr-10">Lorem, ipsum  porro aspernatur eos voluptatum commodi facilis! Autem similique dolorum eos, nesciunt magnam ex alias suscipit aut.</p>
+            <p className="text-white font-semibold mt-2 cursor-pointer pr-10">A SURE WAY
+TO STREAMLINED BACKGROUND SCREENINGS.</p>
 
           </div>
           <Image

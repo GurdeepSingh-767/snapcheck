@@ -4,6 +4,7 @@ import * as React from "react";
 import { useEffect } from 'react';
 import Link from "next/link";
 import {
+  Building2,
   PanelLeft,
   LayoutDashboard,
   UserPlus,
@@ -48,9 +49,10 @@ export default function AdminHeader() {
   // Define array of links
   const links = [
     { href: "/admin/dashboard", text: "Dashboard", icon: < LayoutDashboard className="h-5 w-5" /> },
-    { href: "/admin/internal", text: "Internal HR", icon: <UserPlus className="h-5 w-5" /> },
-    // { href: "/admin/external", text: "External HR", icon: <ListPlus className="h-5 w-5" /> },
-    { href: "/admin/plans", text: "Plan Request", icon: <FolderKanban className="h-5 w-5" /> },
+    { href: "/admin/users", text: "Users", icon: <UserPlus className="h-5 w-5" /> },
+    // 
+    { href: "/admin/plans", text: "Plan ", icon: <FolderKanban className="h-5 w-5" /> },
+    { href: "/admin/customers", text: "Customers", icon: <Building2 className="h-5 w-5" /> },
     { href: "/admin/settings", text: "Settings", icon: <Settings className="h-5 w-5" /> },
     
   ];
@@ -91,7 +93,7 @@ export default function AdminHeader() {
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>Settings</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => router.push('/admin/settings')}>Settings</DropdownMenuItem>
           <DropdownMenuItem>Support</DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>

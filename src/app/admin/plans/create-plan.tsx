@@ -12,25 +12,27 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Input } from "@/components/ui/input"
 import { planSchema } from "@/schemas/planSchema"
 import MultipleSelector, { Option } from '@/components/ui/multiple-selector';
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from 'react';
 
-// const OPTIONS: Option[] = [
-//     { label: 'Item 1', value: 'item1' },
-//     { label: 'Item 2', value: 'item2' },
-//     { label: 'Item 5', value: 'item5', disable: true },
-//     { label: 'Item 6', value: 'item6', disable: true },
-   
-//   ];
 
 export function CreatePlan() {
     const form = useForm<z.infer<typeof planSchema>>({
         resolver: zodResolver(planSchema),
         defaultValues: {
           plan: "",
+          companyName: "",
+          status: "",
           price: 0,
         },
       });
@@ -107,26 +109,53 @@ export function CreatePlan() {
                   <FormControl>
                     <Input  placeholder="Enter the plan name" {...field} />
                   </FormControl>
-                  <FormDescription>
-                    
-                  </FormDescription>
+                 
                   <FormMessage />
                 </FormItem>
               )}
             />
+
+<FormField
+          control={form.control}
+          name="companyName"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Company </FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select the company name" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="company">Company 1</SelectItem>
+                  <SelectItem value="external">Company 2</SelectItem>
+                
+                </SelectContent>
+              </Select>
+              <FormDescription className="p-2 text-xm text-yellow-300 opacity-60 ">
+  If the company name is not listed, please create a new company in the Customers section.
+</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+
+
             
             <FormField
           control={form.control}
           name="items"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Item</FormLabel>
+              <FormLabel>BGC</FormLabel>
               <FormControl>
                 <MultipleSelector
                   value={field.value}
                   onChange={field.onChange}
                   defaultOptions={options}
-                  placeholder="Select a item"
+                  placeholder="Select a BGC"
                   emptyIndicator={
                     <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
                       no results found.
@@ -138,6 +167,8 @@ export function CreatePlan() {
             </FormItem>
           )}
         />
+
+
 
             <FormField
               control={form.control}
@@ -155,6 +186,30 @@ export function CreatePlan() {
                 </FormItem>
               )}
             />
+
+
+<FormField
+          control={form.control}
+          name="status"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Status</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select the status" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="inactive">Inactive</SelectItem>
+                
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <Button type="submit">Submit</Button>
       </form>
     </Form>
