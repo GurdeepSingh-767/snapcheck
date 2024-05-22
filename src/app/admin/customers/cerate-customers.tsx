@@ -15,18 +15,52 @@ import {
 import { Input } from "@/components/ui/input"
 import { customerSchema } from "@/schemas/customerSchema"
 import { toast } from "@/components/ui/use-toast"
+import { useRouter } from "next/navigation"
 export function CreateCustomer() {
+  const router = useRouter();
     const form = useForm<z.infer<typeof customerSchema>>({
         resolver: zodResolver(customerSchema),
         defaultValues: {
-          companyName: "",
-          companyEmail: "",
-          contractId: "",
-          costRate: 0,
+          _id:"",
+          name: "",
+          email: "",
+          contract_id: "",
+          cost_rate: 0,
         },
       });
 
-      function onSubmit(data: z.infer<typeof customerSchema>) {
+      async function onSubmit(data: z.infer<typeof customerSchema>) {
+        try {
+          const response = await fetch('/api/customer', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                name: data.name,
+                email: data.email,
+                contract_id: data.contract_id,
+                cost_rate: data.cost_rate,
+              }),
+          });
+
+          const responseData = await response.json();
+          if (!response.ok) {
+              throw new Error(responseData.message || 'Failed to create customer');
+          }
+          toast({
+            title: "You submitted the following values:",
+            description: (
+              <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+                <code className="text-white">Customer Created</code>
+              </pre>
+            ),
+          })
+          console.log('Customer created:', data);
+          router.push('/admin/dashboard');
+      } catch (error) {
+          console.error('Error creating customer:', error);
+      }
         toast({
           title: "You submitted the following values:",
           description: (
@@ -45,7 +79,7 @@ export function CreateCustomer() {
             
       <FormField
               control={form.control}
-              name="companyName"
+              name="name"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Company name</FormLabel>
@@ -61,7 +95,7 @@ export function CreateCustomer() {
 
 <FormField
               control={form.control}
-              name="companyEmail"
+              name="email"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Company email</FormLabel>
@@ -78,7 +112,7 @@ export function CreateCustomer() {
              
 <FormField
               control={form.control}
-              name="contractId"
+              name="contract_id"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Contract Id</FormLabel>
@@ -95,7 +129,7 @@ export function CreateCustomer() {
 
 <FormField
               control={form.control}
-              name="costRate"
+              name="cost_rate"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Cost rate </FormLabel>

@@ -25,7 +25,7 @@ export const columns: ColumnDef<User>[] = [
     enableHiding: false
   },
   {
-    accessorKey: 'companyName',
+    accessorKey: 'name',
     header: 'COMPANY NAME'
     
   },
@@ -34,11 +34,11 @@ export const columns: ColumnDef<User>[] = [
     header: 'COMPANY EMAIL'
   },
   {
-    accessorKey: 'contractId',
+    accessorKey: 'contract_id',
     header: 'CONTRACT ID'
   },
   {
-    accessorKey: 'costRate',
+    accessorKey: 'cost_rate',
     header: 'COST RATE'
   },
   {

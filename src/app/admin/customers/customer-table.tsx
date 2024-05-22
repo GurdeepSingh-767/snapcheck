@@ -22,12 +22,33 @@ import {
 } from "@/components/ui/card";
 import BreadCrumb from "@/components/breadcrumb";
 import { UserClient } from "./client";
-import { users } from "./data";
+// import { users } from "./data";
 import { CreateCustomer } from "./cerate-customers";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 export default function CustomersTable() {
   const router = useRouter();
+
+  const [user, setUser] = useState([]);
+
+  useEffect(() => {
+      const fetchPlansAndProducts = async () => {
+        try {
+          const response = await fetch('/api/customer');
+          if (!response.ok) {
+            throw new Error(`Failed to fetching customers`);
+          }
+          const data=await response.json();
+          console.log("Response data:",data.data[0]);
+          
+          setUser(data.data);
+        } catch (err) {
+          console.error('Error fetching data:', err);
+        }
+      };
+  
+      fetchPlansAndProducts();
+    }, []);
 
   const breadcrumbItems = [
     { title: 'Customers', link: '/admin/customers' },
@@ -71,7 +92,7 @@ export default function CustomersTable() {
             <CardContent>
             <ScrollArea className="   ">
               <div className="px-1 w-[300px] sm:w-full  py-1">
-              <UserClient data={users} />
+              <UserClient data={user} />
               </div>
               <ScrollBar orientation="horizontal" />
     </ScrollArea>

@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -23,36 +23,74 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { customerSchema } from "@/schemas/customerSchema";
 import { toast } from "@/components/ui/use-toast";
+import { User } from "./data";
 
 interface UpdateCustomerSheetProps {
+  updateData:User;
   isOpen: boolean;
   onClose: () => void;
 }
 
 export function UpdateCustomerSheet({
+  updateData,
   isOpen,
   onClose,
 }: UpdateCustomerSheetProps) {
   const form = useForm<z.infer<typeof customerSchema>>({
     resolver: zodResolver(customerSchema),
     defaultValues: {
-      companyName: "",
-      companyEmail: "",
-      contractId: "",
-      costRate: 0,
+      _id:"",
+      name: "",
+      email: "",
+      contract_id: "",
+      cost_rate: 0,
     },
   });
 
+  useEffect(() => {
+    if (isOpen) {
+      form.reset(updateData); 
+    }
+  }, [isOpen, updateData, form]);
+
   function onSubmit(data: z.infer<typeof customerSchema>) {
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    });
-    onClose(); // Close the sheet after submission
+    try {
+        const updatedCustomerData = {
+            ...updateData,
+            id:data._id,
+            name: data.name,
+            email: data.email,
+            contract_id: data.contract_id,
+            cost_rate: data.cost_rate,
+        };
+
+        fetch(`/api/customer`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updatedCustomerData),
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Customer updated:', data);
+            toast({
+              title: "You submitted the following values:",
+              description: (
+                <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+                  <code className="text-white">{JSON.stringify(updatedCustomerData, null, 2)}</code>
+                </pre>
+              ),
+            });
+            onClose();
+        })
+        .catch(error => {
+            console.error('Error updating Customer:', error);
+            // You can add logic to handle error response
+        });
+    } catch (error) {
+        console.error('Error updating Customer:', error);
+    }
   }
 
   return (
@@ -73,7 +111,7 @@ export function UpdateCustomerSheet({
             >
               <FormField
                 control={form.control}
-                name="companyName"
+                name="name"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Company name</FormLabel>
@@ -90,7 +128,7 @@ export function UpdateCustomerSheet({
               />
               <FormField
                 control={form.control}
-                name="companyEmail"
+                name="email"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Company email</FormLabel>
@@ -107,7 +145,7 @@ export function UpdateCustomerSheet({
               />
               <FormField
                 control={form.control}
-                name="contractId"
+                name="contract_id"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Contract Id</FormLabel>
@@ -124,7 +162,7 @@ export function UpdateCustomerSheet({
               />
               <FormField
                 control={form.control}
-                name="costRate"
+                name="cost_rate"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Cost rate</FormLabel>

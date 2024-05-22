@@ -1,7 +1,8 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ThemeToggle } from "./theme-toggle";
+import { getCookie } from "cookies-next";
 import { Menu, X } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -25,7 +26,7 @@ const navItems = [
     id: 5,
     text: "Solutions",
     link: "#",
-  }, 
+  },
   {
     id: 6,
     text: "Pricing",
@@ -45,9 +46,38 @@ const navItems = [
 
 export default function MainNav() {
   const [openNavbar, setOpenNavbar] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const token = getCookie('admin_token')
+const [myToken , setMyToken] = useState("")
+
+useEffect(() => {
+  const getDetails = async () => {
+    try {
+      const res = await fetch("/api/check-token", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        console.log("Admin details:", data.data);
+        setIsAdmin(data.data)
+      } else {
+        console.error("Failed to fetch Admin details:", res.statusText);
+        setIsAdmin(false);
+      }
+    } catch (error) {
+      console.error("Error fetching admin details:", error);
+    }
+  };
+  getDetails();
+}, []);
+
   const toggleNavbar = () => {
     setOpenNavbar((openNavbar) => !openNavbar);
   };
+
   const closeNavbar = () => {
     setOpenNavbar(false);
   };
@@ -98,18 +128,21 @@ export default function MainNav() {
             </ul>
             <div className="flex flex-col sm:flex-row sm:items-center gap-4 lg:min-w-max mt-10 lg:mt-0">
               <ThemeToggle />
-              <Link
-                href="/login"
-                className="px-6 py-3 font-semibold duration-300 ease-linear flex justify-center w-full sm:w-auto border border-primary text-primary hover:text-white hover:bg-primary dark:text-white dark:bg-primary rounded-full"
-              >
-                Login
-              </Link>
-              {/* <Link
-                href="/login"
-                className="px-3 py-1  font-semibold duration-300 ease-linear flex justify-center w-full sm:w-auto border border-primary text-primary hover:text-white hover:bg-primary dark:text-white dark:bg-primary rounded-full"
-              >
-                View Dashboard
-              </Link> */}
+              {isAdmin ? (
+                <Link
+                  href="/admin/dashboard"
+                  className="px-6 py-3 font-semibold duration-300 ease-linear flex justify-center w-full sm:w-auto border border-primary text-primary hover:text-white hover:bg-primary dark:text-white dark:bg-primary rounded-full"
+                >
+                  View Dashboard
+                </Link>
+              ) : (
+                <Link
+                  href="/login"
+                  className="px-6 py-3 font-semibold duration-300 ease-linear flex justify-center w-full sm:w-auto border border-primary text-primary hover:text-white hover:bg-primary dark:text-white dark:bg-primary rounded-full"
+                >
+                  Login
+                </Link>
+              )}
             </div>
           </motion.div>
           <div className="flex items-center lg:hidden">

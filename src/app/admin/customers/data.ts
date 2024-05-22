@@ -1,351 +1,52 @@
 export type User = {
-  id: number;
-  companyName: string;
+  _id: string;
+  name: string; // Changed from companyName to name
   email: string;
-  contarctId: string;
-  costRate: number;
+  contract_id: string; // Changed from contractId to contract_id
+  cost_rate: number; // Changed from costRate to cost_rate
 };
+
 export const users: User[] = [
   {
-    id: 1,
-    companyName: 'Dell',
-    email: 'test@gamil.com',
-    contarctId: '389621',
-    costRate: 0
+    _id: '1',
+    name: 'Dell',
+    email: 'test@gmail.com',
+    contract_id: '389621',
+    cost_rate: 0
   },
   {
-    id: 2,
-    companyName: 'Dell',
-    email: 'test@gamil.com',
-    contarctId: '389621',
-    costRate: 0
+    _id: '2',
+    name: 'Dell',
+    email: 'test@gmail.com',
+    contract_id: '389621',
+    cost_rate: 0
   },
   {
-    id: 3,
-    companyName: 'Zealits',
-    email: 'test@gamil.com',
-    contarctId: '389621',
-    costRate: 0
+    _id: '3',
+    name: 'Zealits',
+    email: 'test@gmail.com',
+    contract_id: '389621',
+    cost_rate: 0
   },
   {
-    id: 4,
-    companyName: 'Dell',
-    email: 'test@gamil.com',
-    contarctId: '389621',
-    costRate: 0
+    _id: '4',
+    name: 'Dell',
+    email: 'test@gmail.com',
+    contract_id: '389621',
+    cost_rate: 0
   },
   {
-    id: 5,
-    companyName: 'Dell',
-    email: 'test@gamil.com',
-    contarctId: '389621',
-    costRate: 0
+    _id: '5',
+    name: 'Dell',
+    email: 'test@gmail.com',
+    contract_id: '389621',
+    cost_rate: 0
   },
-  {
-    id: 5,
-    companyName: 'Dell',
-    email: 'test@gamil.com',
-    contarctId: '389621',
-    costRate: 0
-  },
-  {
-    id: 1,
-    companyName: 'Dell',
-    email: 'test@gamil.com',
-    contarctId: '389621',
-    costRate: 0
-  },
-  {
-    id: 2,
-    companyName: 'Dell',
-    email: 'test@gamil.com',
-    contarctId: '389621',
-    costRate: 0
-  },
-  {
-    id: 3,
-    companyName: 'Dell',
-    email: 'test@gamil.com',
-    contarctId: '389621',
-    costRate: 0
-  },
-  {
-    id: 4,
-    companyName: 'Dell',
-    email: 'test@gamil.com',
-    contarctId: '389621',
-    costRate: 0
-  },
-  {
-    id: 5,
-    companyName: 'Dell',
-    email: 'test@gamil.com',
-    contarctId: '389621',
-    costRate: 0
-  },
-  {
-    id: 5,
-    companyName: 'Dell',
-    email: 'test@gamil.com',
-    contarctId: '389621',
-    costRate: 0
-  },
-  {
-    id: 2,
-    companyName: 'Dell',
-    email: 'test@gamil.com',
-    contarctId: '389621',
-    costRate: 0
-  },
-  {
-    id: 3,
-    companyName: 'Zealits',
-    email: 'test@gamil.com',
-    contarctId: '389621',
-    costRate: 0
-  },
-  {
-    id: 4,
-    companyName: 'Dell',
-    email: 'test@gamil.com',
-    contarctId: '389621',
-    costRate: 0
-  },
-  {
-    id: 5,
-    companyName: 'Dell',
-    email: 'test@gamil.com',
-    contarctId: '389621',
-    costRate: 0
-  },
-  {
-    id: 5,
-    companyName: 'Dell',
-    email: 'test@gamil.com',
-    contarctId: '389621',
-    costRate: 0
-  },
-  {
-    id: 1,
-    companyName: 'Dell',
-    email: 'test@gamil.com',
-    contarctId: '389621',
-    costRate: 0
-  },
-  {
-    id: 2,
-    companyName: 'Dell',
-    email: 'test@gamil.com',
-    contarctId: '389621',
-    costRate: 0
-  },
-  {
-    id: 3,
-    companyName: 'Dell',
-    email: 'test@gamil.com',
-    contarctId: '389621',
-    costRate: 0
-  },
-  {
-    id: 4,
-    companyName: 'Dell',
-    email: 'test@gamil.com',
-    contarctId: '389621',
-    costRate: 0
-  },
-  {
-    id: 2,
-    companyName: 'Dell',
-    email: 'test@gamil.com',
-    contarctId: '389621',
-    costRate: 0
-  },
-  {
-    id: 3,
-    companyName: 'Zealits',
-    email: 'test@gamil.com',
-    contarctId: '389621',
-    costRate: 0
-  },
-  {
-    id: 4,
-    companyName: 'Dell',
-    email: 'test@gamil.com',
-    contarctId: '389621',
-    costRate: 0
-  },
-  {
-    id: 5,
-    companyName: 'Dell',
-    email: 'test@gamil.com',
-    contarctId: '389621',
-    costRate: 0
-  },
-  {
-    id: 5,
-    companyName: 'Dell',
-    email: 'test@gamil.com',
-    contarctId: '389621',
-    costRate: 0
-  },
-  {
-    id: 1,
-    companyName: 'Dell',
-    email: 'test@gamil.com',
-    contarctId: '389621',
-    costRate: 0
-  },
-  {
-    id: 2,
-    companyName: 'Dell',
-    email: 'test@gamil.com',
-    contarctId: '389621',
-    costRate: 0
-  },
-  {
-    id: 3,
-    companyName: 'Dell',
-    email: 'test@gamil.com',
-    contarctId: '389621',
-    costRate: 0
-  },
-  {
-    id: 4,
-    companyName: 'Dell',
-    email: 'test@gamil.com',
-    contarctId: '389621',
-    costRate: 0
-  },
-  {
-    id: 2,
-    companyName: 'Dell',
-    email: 'test@gamil.com',
-    contarctId: '389621',
-    costRate: 0
-  },
-  {
-    id: 3,
-    companyName: 'Zealits',
-    email: 'test@gamil.com',
-    contarctId: '389621',
-    costRate: 0
-  },
-  {
-    id: 4,
-    companyName: 'Dell',
-    email: 'test@gamil.com',
-    contarctId: '389621',
-    costRate: 0
-  },
-  {
-    id: 5,
-    companyName: 'Dell',
-    email: 'test@gamil.com',
-    contarctId: '389621',
-    costRate: 0
-  },
-  {
-    id: 5,
-    companyName: 'Dell',
-    email: 'test@gamil.com',
-    contarctId: '389621',
-    costRate: 0
-  },
-  {
-    id: 1,
-    companyName: 'Dell',
-    email: 'test@gamil.com',
-    contarctId: '389621',
-    costRate: 0
-  },
-  {
-    id: 2,
-    companyName: 'Dell',
-    email: 'test@gamil.com',
-    contarctId: '389621',
-    costRate: 0
-  },
-  {
-    id: 3,
-    companyName: 'Dell',
-    email: 'test@gamil.com',
-    contarctId: '389621',
-    costRate: 0
-  },
-  {
-    id: 4,
-    companyName: 'Dell',
-    email: 'test@gamil.com',
-    contarctId: '389621',
-    costRate: 0
-  },
-  {
-    id: 2,
-    companyName: 'Dell',
-    email: 'test@gamil.com',
-    contarctId: '389621',
-    costRate: 0
-  },
-  {
-    id: 3,
-    companyName: 'Zealits',
-    email: 'test@gamil.com',
-    contarctId: '389621',
-    costRate: 0
-  },
-  {
-    id: 4,
-    companyName: 'Dell',
-    email: 'test@gamil.com',
-    contarctId: '389621',
-    costRate: 0
-  },
-  {
-    id: 5,
-    companyName: 'Dell',
-    email: 'test@gamil.com',
-    contarctId: '389621',
-    costRate: 0
-  },
-  {
-    id: 5,
-    companyName: 'Dell',
-    email: 'test@gamil.com',
-    contarctId: '389621',
-    costRate: 0
-  },
-  {
-    id: 1,
-    companyName: 'Dell',
-    email: 'test@gamil.com',
-    contarctId: '389621',
-    costRate: 0
-  },
-  {
-    id: 2,
-    companyName: 'Dell',
-    email: 'test@gamil.com',
-    contarctId: '389621',
-    costRate: 0
-  },
-  {
-    id: 3,
-    companyName: 'Dell',
-    email: 'test@gamil.com',
-    contarctId: '389621',
-    costRate: 0
-  },
-  {
-    id: 4,
-    companyName: 'Dell',
-    email: 'test@gamil.com',
-    contarctId: '389621',
-    costRate: 0
-  },
+  // Add the rest of the user objects...
 ];
 
 export type Employee = {
-  id: number;
+  _id: string;
   first_name: string;
   last_name: string;
   email: string;
@@ -362,5 +63,3 @@ export type Employee = {
   job: string;
   profile_picture?: string | null; // Profile picture can be a string (URL) or null (if no picture)
 };
-
-
