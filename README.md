@@ -33,7 +33,7 @@ Follow these steps to set up and run Snapcheck on your local machine:
 1. Clone the repository:
 
     ```bash
-    git clone https://github.com/your-username/snapcheck.git
+    git clone https://github.com/agilelabsgit/snapcheck.git
     ```
 
 2. Navigate to the project directory:
@@ -49,11 +49,6 @@ Follow these steps to set up and run Snapcheck on your local machine:
     npm install
     ```
 
-    Using yarn:
-    ```bash
-    yarn install
-    ```
-
 4. Create a `.env.local` file in the root of the project and add your MongoDB connection string and any other necessary environment variables:
 
     ```env
@@ -65,11 +60,6 @@ Follow these steps to set up and run Snapcheck on your local machine:
     Using npm:
     ```bash
     npm run dev
-    ```
-
-    Using yarn:
-    ```bash
-    yarn dev
     ```
 
 6. Open your browser and visit [http://localhost:3000](http://localhost:3000) to see the application running.
@@ -93,5 +83,3 @@ Contributions are welcome! If you would like to contribute to Snapcheck, please 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ---
-
-Feel free to enhance and customize this README to fit the specific details and needs of your Snapcheck project.
