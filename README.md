@@ -52,7 +52,11 @@ Follow these steps to set up and run Snapcheck on your local machine:
 4. Create a `.env.local` file in the root of the project and add your MongoDB connection string and any other necessary environment variables:
 
     ```env
-    MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/snapcheck?retryWrites=true&w=majority
+     MONGODB_URI=""
+    TOKEN_SECRET=""
+    EMAIL_USERNAME=""
+    EMAIL_PASSWORD=""
+    DOMAIN=http://localhost:3000
     ```
 
 5. Run the development server:
